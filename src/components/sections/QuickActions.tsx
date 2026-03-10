@@ -1,0 +1,40 @@
+import historyTransaction from '../../assets/img/history-transaction.png';
+import reffererSystem from '../../assets/img/refferer-system.png';
+import eSim from '../../assets/img/e-sim.png';
+import supportImg from '../../assets/img/support.png';
+import { ActionCard } from '../cards/ActionCard';
+import { BankIcon } from '../icons/BankIcon';
+import { ReferralIcon } from '../icons/ReferralIcon';
+import { PuzzleIcon } from '../icons/PuzzleIcon';
+
+export function QuickActions() {
+  return (
+    <div className="flex w-full gap-1.5 flex-col">
+      <div className="flex w-full gap-1.5">
+        <ActionCard
+          icon={<BankIcon />}
+          image={historyTransaction}
+          label={<>История<br />транзакций</>}
+        />
+        <ActionCard
+          icon={<ReferralIcon />}
+          image={reffererSystem}
+          label={<>Реферальная<br />система</>}
+          to="/reffer"
+        />
+      </div>
+      <div className="flex w-full gap-1.5">
+        <ActionCard
+          icon={<PuzzleIcon />}
+          image={eSim}
+          label={<>eSIM<br />карты</>}
+        />
+        <ActionCard
+          icon={<PuzzleIcon />}
+          image={supportImg}
+          label={<>Служба<br />поддержки</>}
+        />
+      </div>
+    </div>
+  );
+}
