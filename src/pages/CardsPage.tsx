@@ -3,10 +3,27 @@ import { GradientHeader } from '../components/ui/GradientHeader';
 import { SearchInput } from '../components/ui/SearchInput';
 import { CardListItem } from '../components/cards/CardListItem';
 import { IssueCardButton } from '../components/ui/IssueCardButton';
-import { Spinner } from '../components/ui/Spinner';
+import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useCardsStore, useAuthStore, selectCards, selectCardsLoading, selectCardsError } from '../store';
 import { getLastDigits } from '../lib/format';
+
+function CardListSkeleton() {
+  return (
+    <div className="flex flex-col w-full gap-1.5">
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="flex p-1.5 w-full items-center gap-3 bg-[#15111F] rounded-2xl border border-[#2A223E]">
+          <Skeleton className="h-20 w-36 rounded-xl" />
+          <div className="flex flex-col gap-2 flex-1">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-3 w-10" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function CardsPage() {
   const cards = useCardsStore(selectCards);
@@ -49,30 +66,30 @@ export function CardsPage() {
 
       <SearchInput value={search} onChange={setSearch} placeholder="Поиск карты" />
 
-      <div className="flex flex-col w-full gap-1.5">
-        {isLoading && cards.length === 0 && (
-          <div className="flex justify-center py-8">
-            <Spinner size={6} />
-          </div>
-        )}
-        {error && cards.length === 0 && (
-          <div className="py-8">
-            <ErrorMessage message={error} onRetry={fetchCards} />
-          </div>
-        )}
-        {filteredCards.map((card) => (
-          <CardListItem
-            key={card.card_id}
-            card={card}
-            onToggleFavorite={(id) => toggleFavourite(id, !card.is_favorite)}
-          />
-        ))}
-        {!isLoading && !error && filteredCards.length === 0 && (
-          <span className="text-white/50 text-sm text-center py-8">
-            Карты не найдены
-          </span>
-        )}
-      </div>
+      {isLoading && cards.length === 0 && <CardListSkeleton />}
+
+      {error && cards.length === 0 && (
+        <div className="py-8">
+          <ErrorMessage message={error} onRetry={fetchCards} />
+        </div>
+      )}
+
+      {cards.length > 0 && (
+        <div className="flex flex-col w-full gap-1.5">
+          {filteredCards.map((card) => (
+            <CardListItem
+              key={card.card_id}
+              card={card}
+              onToggleFavorite={(id) => toggleFavourite(id, !card.is_favorite)}
+            />
+          ))}
+          {filteredCards.length === 0 && (
+            <span className="text-white/50 text-sm text-center py-8">
+              Карты не найдены
+            </span>
+          )}
+        </div>
+      )}
 
       <IssueCardButton />
     </div>

@@ -3,9 +3,8 @@ import { useParams } from 'react-router-dom';
 import { BalanceCard } from '../components/sections/BalanceCard';
 import { InfoRow } from '../components/ui/InfoRow';
 import { BackBottomBar } from '../components/ui/BackBottomBar';
-import { Spinner } from '../components/ui/Spinner';
+import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
-import { StarIcon } from '../components/icons/StarIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 
 const EditIcon = memo(function EditIcon() {
@@ -32,6 +31,36 @@ const CloseIcon = memo(function CloseIcon() {
   );
 });
 
+function CardPageSkeleton() {
+  return (
+    <>
+      <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
+        {/* BalanceCard skeleton */}
+        <div className="rounded-2xl overflow-hidden p-5 flex flex-col gap-4 bg-white/[0.04]">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-10 w-40" />
+          </div>
+          <div className="flex justify-between">
+            <Skeleton className="h-11 w-40 rounded-lg" />
+            <Skeleton className="h-11 w-24 rounded-lg" />
+          </div>
+        </div>
+        {/* Info rows skeleton */}
+        <div className="flex flex-col gap-1.5">
+          {Array.from({ length: 7 }, (_, i) => (
+            <div key={i} className="flex w-full items-center justify-between rounded-lg py-3 px-4 bg-[#181424]">
+              <Skeleton className="h-3.5 w-24" />
+              <Skeleton className="h-3.5 w-32" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <BackBottomBar />
+    </>
+  );
+}
+
 export function CardPage() {
   const { id } = useParams();
   const card = useCardsStore(selectCurrentCard);
@@ -39,7 +68,6 @@ export function CardPage() {
   const error = useCardsStore(selectCurrentCardError);
   const fetchCardInfo = useCardsStore((s) => s.fetchCardInfo);
   const clearCurrent = useCardsStore((s) => s.clearCurrent);
-  const toggleFavourite = useCardsStore((s) => s.toggleFavourite);
   const renameCard = useCardsStore((s) => s.renameCard);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -88,30 +116,13 @@ export function CardPage() {
   }
 
   if (isLoading || !card) {
-    return (
-      <>
-        <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19 items-center justify-center">
-          <Spinner size={6} />
-        </div>
-        <BackBottomBar />
-      </>
-    );
+    return <CardPageSkeleton />;
   }
 
   return (
     <>
       <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
         <BalanceCard title="Баланс Карты" balance={card.balance} />
-
-        <div className="flex justify-between items-center">
-          <span className="text-white/64 font-medium text-sm">{card.type} · {card.category_name}</span>
-          <button
-            onClick={() => toggleFavourite(card.card_id, !card.is_favorite)}
-            className="transition-transform duration-200 active:scale-90"
-          >
-            <StarIcon filled={card.is_favorite} />
-          </button>
-        </div>
 
         <div className="flex flex-col gap-1.5">
           {isEditing ? (
