@@ -37,7 +37,7 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
       set({
         mainBalance: data.main_balance,
         cardsBalance: data.cards_balance,
-        favoriteCards: data.favourite_cards,
+        favoriteCards: data.favorite_cards,
         isLoading: false,
       });
     } catch (e) {
