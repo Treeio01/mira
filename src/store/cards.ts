@@ -5,7 +5,8 @@ import {
   makeCardFavourite as apiMakeCardFavourite,
   updateCardName as apiUpdateCardName,
 } from '../services/api';
-import type { ListCardItem, CardInfoItem, ApiError } from '../services/api';
+import type { ListCardItem, CardInfoItem } from '../services/api';
+import { extractErrorMessage } from '../lib/error';
 
 // ── Types ──
 
@@ -29,6 +30,10 @@ interface CardsActions {
 
 type CardsStore = CardsState & CardsActions;
 
+// ── Helpers ──
+
+let favouriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
+
 // ── Store ──
 
 export const useCardsStore = create<CardsStore>()((set, get) => ({
@@ -48,7 +53,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
       const { list_cards } = await apiGetCards();
       set({ list: list_cards, listLoading: false });
     } catch (e) {
-      set({ listError: (e as ApiError).detail ?? 'Не удалось загрузить карты', listLoading: false });
+      set({ listError: extractErrorMessage(e, 'Не удалось загрузить карты'), listLoading: false });
     }
   },
 
@@ -59,7 +64,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
       const { card_info } = await apiGetCardInfo({ card_id: cardId });
       set({ current: card_info, currentLoading: false });
     } catch (e) {
-      set({ currentError: (e as ApiError).detail ?? 'Не удалось загрузить карту', currentLoading: false });
+      set({ currentError: extractErrorMessage(e, 'Не удалось загрузить карту'), currentLoading: false });
     }
   },
 
@@ -98,7 +103,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
     }
   },
 
-  clearCurrent: () => set({ current: null, currentError: null }),
+  clearCurrent: () => set({ current: null, currentError: null, currentLoading: false }),
 }));
 
 // ── Selectors ──
@@ -111,5 +116,10 @@ export const selectCurrentCard = (s: CardsStore) => s.current;
 export const selectCurrentCardLoading = (s: CardsStore) => s.currentLoading;
 export const selectCurrentCardError = (s: CardsStore) => s.currentError;
 
-export const selectFavouriteCards = (s: CardsStore) =>
-  s.list.filter((c) => c.is_favorite);
+/** Стабильная ссылка — не создаёт новый массив если list не изменился */
+export const selectFavouriteCards = (s: CardsStore) => {
+  if (favouriteCache.ref === s.list) return favouriteCache.result;
+  const result = s.list.filter((c) => c.is_favorite);
+  favouriteCache = { ref: s.list, result };
+  return result;
+};

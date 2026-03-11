@@ -3,14 +3,34 @@ import { BalanceCard } from '../components/sections/BalanceCard';
 import { CardBalance } from '../components/sections/CardBalance';
 import { FavoriteCards } from '../components/sections/FavoriteCards';
 import { QuickActions } from '../components/sections/QuickActions';
-import { useMenuStore } from '../store';
+import { Spinner } from '../components/ui/Spinner';
+import { ErrorMessage } from '../components/ui/ErrorMessage';
+import { useMenuStore, selectMenuLoading, selectMenuError } from '../store';
 
 export function HomePage() {
   const fetchMenu = useMenuStore((s) => s.fetchMenu);
+  const isLoading = useMenuStore(selectMenuLoading);
+  const error = useMenuStore(selectMenuError);
 
   useEffect(() => {
     fetchMenu();
   }, [fetchMenu]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col p-4 gap-4 w-full h-full mb-18 items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col p-4 gap-4 w-full h-full mb-18 items-center justify-center">
+        <ErrorMessage message={error} onRetry={fetchMenu} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col p-4 gap-4 w-full h-full mb-18">

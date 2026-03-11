@@ -26,6 +26,7 @@ export interface FavouriteCardItem {
   type: string;
   number: string;
   balance: number;
+  is_favourite: boolean;
 }
 
 export interface MainMenuResponse {
@@ -39,6 +40,7 @@ export interface MainMenuResponse {
 export interface ListCardItem {
   card_id: number;
   type: string;
+  card_name: string | null;
   number: string;
   balance: number;
   is_favorite: boolean;
@@ -59,7 +61,7 @@ export interface CardInfoItem {
   owner_name: string;
   address: string;
   region: string;
-  warnings: string | null;
+  warnings: number | string | null;
   status: string;
   balance: number;
   is_favorite: boolean;

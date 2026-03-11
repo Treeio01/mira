@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { getMainMenu as apiGetMainMenu } from '../services/api';
-import type { FavouriteCardItem, ApiError } from '../services/api';
+import type { FavouriteCardItem } from '../services/api';
+import { extractErrorMessage } from '../lib/error';
 
 // ── Types ──
 
@@ -40,7 +41,7 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
         isLoading: false,
       });
     } catch (e) {
-      set({ error: (e as ApiError).detail ?? 'Не удалось загрузить меню', isLoading: false });
+      set({ error: extractErrorMessage(e, 'Не удалось загрузить данные'), isLoading: false });
     }
   },
 }));

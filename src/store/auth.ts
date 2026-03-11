@@ -3,8 +3,8 @@ import {
   register as apiRegister,
   logout as apiLogout,
 } from '../services/api';
-import type { ApiError } from '../services/api';
 import { isTelegramWebApp } from '../lib/telegram';
+import { extractErrorMessage } from '../lib/error';
 
 // ── Types ──
 
@@ -14,7 +14,6 @@ interface AuthState {
   isNewUser: boolean;
   userId: number | null;
   error: string | null;
-  /** Начальная инициализация завершена (успех или ошибка) */
   isInitialized: boolean;
 }
 
@@ -60,9 +59,8 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         isInitialized: true,
       });
     } catch (e) {
-      const detail = (e as ApiError).detail ?? 'Ошибка авторизации';
       set({
-        error: detail,
+        error: extractErrorMessage(e, 'Ошибка авторизации'),
         isAuthed: false,
         isLoading: false,
         isInitialized: true,

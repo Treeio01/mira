@@ -3,13 +3,29 @@ import type { ApiErrorResponse, RefreshTokenResponse } from './types';
 import { tokenStorage } from './token';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.miracards.net';
+const REQUEST_TIMEOUT = 15_000;
 
 let refreshPromise: Promise<RefreshTokenResponse> | null = null;
 
-/**
- * Refresh: отправляет текущий (истёкший) токен,
- * получает новый access_token.
- */
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'AbortError') {
+      throw new ApiError(0, 'Превышено время ожидания');
+    }
+    throw new ApiError(0, 'Нет соединения с сервером');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function refreshToken(): Promise<RefreshTokenResponse> {
   const token = tokenStorage.getAccessToken();
   if (!token) {
@@ -17,7 +33,7 @@ async function refreshToken(): Promise<RefreshTokenResponse> {
     throw new ApiError(401, 'No access token for refresh');
   }
 
-  const res = await fetch(`${BASE_URL}/api/v1/refresh`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/v1/refresh`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,10 +52,6 @@ async function refreshToken(): Promise<RefreshTokenResponse> {
   return data;
 }
 
-/**
- * Гарантирует валидный токен.
- * Дедуплицирует параллельные refresh-запросы.
- */
 async function ensureValidToken(): Promise<string | null> {
   if (!tokenStorage.hasToken()) return null;
 
@@ -55,11 +67,6 @@ async function ensureValidToken(): Promise<string | null> {
   return tokenStorage.getAccessToken();
 }
 
-/**
- * Базовый запрос к API.
- * Авто-подставляет Bearer токен.
- * При 401 — пробует refresh один раз.
- */
 export async function apiRequest<T>(
   endpoint: string,
   options: {
@@ -81,29 +88,30 @@ export async function apiRequest<T>(
     }
   }
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const init: RequestInit = {
     method,
     headers,
     body: body != null ? JSON.stringify(body) : undefined,
-  });
+  };
+
+  const res = await fetchWithTimeout(`${BASE_URL}${endpoint}`, init);
 
   // Авто-refresh при 401
   if (res.status === 401 && !skipAuth && tokenStorage.hasToken()) {
-    try {
-      if (!refreshPromise) {
-        refreshPromise = refreshToken().finally(() => {
-          refreshPromise = null;
-        });
-      }
-      const refreshed = await refreshPromise;
+    if (!refreshPromise) {
+      refreshPromise = refreshToken().finally(() => {
+        refreshPromise = null;
+      });
+    }
 
-      const retryRes = await fetch(`${BASE_URL}${endpoint}`, {
-        method,
+    try {
+      const refreshed = await refreshPromise;
+      const retryRes = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
+        ...init,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${refreshed.access_token}`,
         },
-        body: body != null ? JSON.stringify(body) : undefined,
       });
 
       if (!retryRes.ok) {
@@ -112,9 +120,9 @@ export async function apiRequest<T>(
       }
 
       return retryRes.json() as Promise<T>;
-    } catch (e) {
+    } catch {
       tokenStorage.clear();
-      throw e;
+      throw new ApiError(401, 'Сессия истекла');
     }
   }
 

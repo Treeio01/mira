@@ -3,12 +3,15 @@ import { GradientHeader } from '../components/ui/GradientHeader';
 import { SearchInput } from '../components/ui/SearchInput';
 import { CardListItem } from '../components/cards/CardListItem';
 import { IssueCardButton } from '../components/ui/IssueCardButton';
-import { useCardsStore, useAuthStore, selectCards, selectCardsLoading } from '../store';
+import { Spinner } from '../components/ui/Spinner';
+import { ErrorMessage } from '../components/ui/ErrorMessage';
+import { useCardsStore, useAuthStore, selectCards, selectCardsLoading, selectCardsError } from '../store';
 import { getLastDigits } from '../lib/format';
 
 export function CardsPage() {
   const cards = useCardsStore(selectCards);
   const isLoading = useCardsStore(selectCardsLoading);
+  const error = useCardsStore(selectCardsError);
   const fetchCards = useCardsStore((s) => s.fetchCards);
   const toggleFavourite = useCardsStore((s) => s.toggleFavourite);
   const userId = useAuthStore((s) => s.userId);
@@ -24,6 +27,7 @@ export function CardsPage() {
     return cards.filter(
       (c) =>
         c.type.toLowerCase().includes(q) ||
+        (c.card_name?.toLowerCase().includes(q) ?? false) ||
         getLastDigits(c.number).includes(q),
     );
   }, [cards, search]);
@@ -47,7 +51,14 @@ export function CardsPage() {
 
       <div className="flex flex-col w-full gap-1.5">
         {isLoading && cards.length === 0 && (
-          <span className="text-white/50 text-sm text-center py-8">Загрузка...</span>
+          <div className="flex justify-center py-8">
+            <Spinner size={6} />
+          </div>
+        )}
+        {error && cards.length === 0 && (
+          <div className="py-8">
+            <ErrorMessage message={error} onRetry={fetchCards} />
+          </div>
         )}
         {filteredCards.map((card) => (
           <CardListItem
@@ -56,7 +67,7 @@ export function CardsPage() {
             onToggleFavorite={(id) => toggleFavourite(id, !card.is_favorite)}
           />
         ))}
-        {!isLoading && filteredCards.length === 0 && (
+        {!isLoading && !error && filteredCards.length === 0 && (
           <span className="text-white/50 text-sm text-center py-8">
             Карты не найдены
           </span>

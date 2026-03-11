@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { memo, type CSSProperties } from 'react';
 import { MastercardLogo } from '../icons/MastercardLogo';
 import { VisaLogo } from '../icons/VisaLogo';
 import type { CardVariant } from '../../lib/format';
@@ -25,7 +25,7 @@ interface MiniCardProps {
   balanceCents: string;
 }
 
-export function MiniCard({ variant, lastDigits, balance, balanceCents }: MiniCardProps) {
+export const MiniCard = memo(function MiniCard({ variant, lastDigits, balance, balanceCents }: MiniCardProps) {
   const Logo = variantLogos[variant];
 
   return (
@@ -42,4 +42,4 @@ export function MiniCard({ variant, lastDigits, balance, balanceCents }: MiniCar
       </span>
     </div>
   );
-}
+});
