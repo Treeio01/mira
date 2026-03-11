@@ -20,7 +20,7 @@ export async function getCardInfo(payload: CardInfoPayload): Promise<CardInfoRes
 }
 
 export async function makeFavorite(payload: MakeFavoritePayload): Promise<MakeFavoriteResponse> {
-  return apiRequest<MakeFavoriteResponse>('/api/v1/make_card_favourite', {
+  return apiRequest<MakeFavoriteResponse>('/api/v1/make_card_favorite', {
     body: payload,
   });
 }

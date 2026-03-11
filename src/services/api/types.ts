@@ -32,8 +32,7 @@ export interface FavoriteCardItem {
 export interface MainMenuResponse {
   main_balance: number;
   cards_balance: number;
-  favorite_cards?: FavoriteCardItem[];
-  favourite_cards?: FavoriteCardItem[];
+  favorite_cards: FavoriteCardItem[];
 }
 
 // ── Cards ──
