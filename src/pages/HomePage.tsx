@@ -1,9 +1,17 @@
+import { useEffect } from 'react';
 import { BalanceCard } from '../components/sections/BalanceCard';
 import { CardBalance } from '../components/sections/CardBalance';
 import { FavoriteCards } from '../components/sections/FavoriteCards';
 import { QuickActions } from '../components/sections/QuickActions';
+import { useMenuStore } from '../store';
 
 export function HomePage() {
+  const fetchMenu = useMenuStore((s) => s.fetchMenu);
+
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
+
   return (
     <div className="flex flex-col p-4 gap-4 w-full h-full mb-18">
       <div className="flex flex-col w-full gap-2.5">

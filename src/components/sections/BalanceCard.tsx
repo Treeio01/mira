@@ -3,13 +3,20 @@ import { GradientHeader } from '../ui/GradientHeader';
 import { EyeIcon } from '../icons/EyeIcon';
 import { EyeHiddenIcon } from '../icons/EyeHiddenIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import { useMenuStore, useAuthStore, selectMainBalance } from '../../store';
+import { formatBalance } from '../../lib/format';
 
 interface BalanceCardProps {
   title?: string;
+  balance?: number;
 }
 
-export function BalanceCard({ title = 'Основной баланс' }: BalanceCardProps) {
+export function BalanceCard({ title = 'Основной баланс', balance }: BalanceCardProps) {
   const [visible, setVisible] = useState(true);
+  const mainBalance = useMenuStore(selectMainBalance);
+  const userId = useAuthStore((s) => s.userId);
+  const displayBalance = balance ?? mainBalance;
+  const { whole, cents } = formatBalance(displayBalance);
 
   return (
     <GradientHeader className="flex-col gap-2.5">
@@ -20,7 +27,7 @@ export function BalanceCard({ title = 'Основной баланс' }: Balance
         <div className="flex items-center gap-4">
           {visible ? (
             <span className="font-semibold flex text-[36px] leading-[112%] tracking-[-0.01em] text-white">
-              $12,840<span className="text-white/64">.50</span>
+              {whole}<span className="text-white/64">{cents}</span>
             </span>
           ) : (
             <span className="font-semibold flex text-[36px] leading-[112%] tracking-[-0.01em] text-white">
@@ -40,11 +47,13 @@ export function BalanceCard({ title = 'Основной баланс' }: Balance
             Пополнить баланс
           </span>
         </button>
-        <div className="flex py-3 px-4 rounded-lg bg-black/24 backdrop-blur-[7px] items-center">
-          <span className="text-white font-medium text-xs leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-            ID: 2831234
-          </span>
-        </div>
+        {userId && (
+          <div className="flex py-3 px-4 rounded-lg bg-black/24 backdrop-blur-[7px] items-center">
+            <span className="text-white font-medium text-xs leading-[140%] tracking-[-0.02em] whitespace-nowrap">
+              ID: {userId}
+            </span>
+          </div>
+        )}
       </div>
     </GradientHeader>
   );

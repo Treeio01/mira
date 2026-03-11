@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { PlusCircleIcon } from '../icons/PlusCircleIcon';
 import { MiniCard } from '../cards/MiniCard';
-import { mockCards, formatBalance } from '../../lib/mock-data';
-
-const favorites = mockCards.filter((c) => c.isFavorite);
+import { useMenuStore, selectMenuFavourites } from '../../store';
+import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
 
 export function FavoriteCards() {
   const navigate = useNavigate();
+  const favourites = useMenuStore(selectMenuFavourites);
+
+  if (favourites.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-3.5 w-full">
@@ -18,17 +20,17 @@ export function FavoriteCards() {
           <PlusCircleIcon />
         </button>
         <div className="flex w-full overflow-x-scroll gap-1.5">
-          {favorites.map((card) => {
+          {favourites.map((card) => {
             const { whole, cents } = formatBalance(card.balance);
             return (
               <div
-                key={card.id}
-                onClick={() => navigate(`/cards/${card.id}`)}
+                key={card.card_id}
+                onClick={() => navigate(`/cards/${card.card_id}`)}
                 className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
               >
                 <MiniCard
-                  variant={card.variant}
-                  lastDigits={card.lastDigits}
+                  variant={resolveCardVariant(card.type)}
+                  lastDigits={getLastDigits(card.number)}
                   balance={whole}
                   balanceCents={cents}
                 />

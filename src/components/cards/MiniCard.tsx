@@ -1,8 +1,7 @@
 import type { CSSProperties } from 'react';
 import { MastercardLogo } from '../icons/MastercardLogo';
 import { VisaLogo } from '../icons/VisaLogo';
-
-type CardVariant = 'mastercard' | 'visa';
+import type { CardVariant } from '../../lib/format';
 
 const variantStyles: Record<CardVariant, CSSProperties> = {
   mastercard: {

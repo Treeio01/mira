@@ -1,4 +1,10 @@
+import { useMenuStore, selectCardsBalance } from '../../store';
+import { formatBalance } from '../../lib/format';
+
 export function CardBalance() {
+  const cardsBalance = useMenuStore(selectCardsBalance);
+  const { whole, cents } = formatBalance(cardsBalance);
+
   return (
     <div
       className="flex flex-col w-full p-4 rounded-[14px] items-start justify-center"
@@ -9,7 +15,7 @@ export function CardBalance() {
           Общий баланс карт
         </span>
         <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
-          $1,140<span className="text-white/64">.00</span>
+          {whole}<span className="text-white/64">{cents}</span>
         </span>
       </div>
     </div>

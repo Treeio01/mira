@@ -1,0 +1,121 @@
+// ── Auth ──
+
+export interface RegisterPayload {
+  query_id: string;
+  user: {
+    id: number;
+    first_name?: string | null;
+    username?: string | null;
+  };
+  auth_date: number;
+  hash: string;
+}
+
+export interface RegisterResponse {
+  user_id: number;
+  is_new_user: boolean;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
+export interface RefreshTokenResponse {
+  user_id: number;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
+// ── Main Menu ──
+
+export interface FavouriteCardItem {
+  card_id: number;
+  type: string;
+  number: string;
+  balance: number;
+}
+
+export interface MainMenuResponse {
+  main_balance: number;
+  cards_balance: number;
+  favourite_cards: FavouriteCardItem[];
+}
+
+// ── Cards ──
+
+export interface ListCardItem {
+  card_id: number;
+  type: string;
+  number: string;
+  balance: number;
+  is_favorite: boolean;
+}
+
+export interface ListCardsResponse {
+  list_cards: ListCardItem[];
+}
+
+export interface CardInfoItem {
+  card_id: number;
+  type: string;
+  category_name: string;
+  card_name: string;
+  number: string;
+  date: string;
+  cvc: string;
+  owner_name: string;
+  address: string;
+  region: string;
+  warnings: string | null;
+  status: string;
+  balance: number;
+  is_favorite: boolean;
+}
+
+export interface CardInfoResponse {
+  card_info: CardInfoItem;
+}
+
+export interface CardInfoPayload {
+  card_id: number;
+}
+
+export interface MakeCardFavouritePayload {
+  card_id: number;
+  is_favorite: boolean;
+}
+
+export interface MakeCardFavouriteResponse {
+  card_id: number;
+  is_favorite: boolean;
+  status: string;
+}
+
+export interface UpdateCardNamePayload {
+  card_id: number;
+  card_name: string;
+}
+
+export interface UpdateCardNameResponse {
+  card_id: number;
+  card_name: string;
+  status: string;
+}
+
+// ── Errors ──
+
+export interface ApiErrorResponse {
+  detail: string;
+}
+
+export class ApiError extends Error {
+  status: number;
+  detail: string;
+
+  constructor(status: number, detail: string) {
+    super(detail);
+    this.name = 'ApiError';
+    this.status = status;
+    this.detail = detail;
+  }
+}
