@@ -1,14 +1,7 @@
 // ── Auth ──
 
 export interface RegisterPayload {
-  query_id: string;
-  user: {
-    id: number;
-    first_name?: string | null;
-    username?: string | null;
-  };
-  auth_date: number;
-  hash: string;
+  init_data: string;
 }
 
 export interface RegisterResponse {
