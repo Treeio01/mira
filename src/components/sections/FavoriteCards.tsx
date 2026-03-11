@@ -1,14 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { PlusCircleIcon } from '../icons/PlusCircleIcon';
 import { MiniCard } from '../cards/MiniCard';
-import { useMenuStore, selectMenuFavourites } from '../../store';
+import { Skeleton } from '../ui/Skeleton';
+import { useMenuStore, selectMenuFavorites } from '../../store';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
 
-export function FavoriteCards() {
-  const navigate = useNavigate();
-  const favourites = useMenuStore(selectMenuFavourites);
+interface FavoriteCardsProps {
+  loading?: boolean;
+}
 
-  if (favourites.length === 0) return null;
+export function FavoriteCards({ loading }: FavoriteCardsProps) {
+  const navigate = useNavigate();
+  const favorites = useMenuStore(selectMenuFavorites);
+
+  if (!loading && favorites.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-3.5 w-full">
@@ -20,23 +25,30 @@ export function FavoriteCards() {
           <PlusCircleIcon />
         </button>
         <div className="flex w-full overflow-x-scroll gap-1.5">
-          {favourites.map((card) => {
-            const { whole, cents } = formatBalance(card.balance);
-            return (
-              <div
-                key={card.card_id}
-                onClick={() => navigate(`/cards/${card.card_id}`)}
-                className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
-              >
-                <MiniCard
-                  variant={resolveCardVariant(card.type)}
-                  lastDigits={getLastDigits(card.number)}
-                  balance={whole}
-                  balanceCents={cents}
-                />
-              </div>
-            );
-          })}
+          {loading ? (
+            <>
+              <Skeleton className="h-22 min-w-36 rounded-xl" />
+              <Skeleton className="h-22 min-w-36 rounded-xl" />
+            </>
+          ) : (
+            favorites.map((card) => {
+              const { whole, cents } = formatBalance(card.balance);
+              return (
+                <div
+                  key={card.card_id}
+                  onClick={() => navigate(`/cards/${card.card_id}`)}
+                  className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
+                >
+                  <MiniCard
+                    variant={resolveCardVariant(card.type)}
+                    lastDigits={getLastDigits(card.number)}
+                    balance={whole}
+                    balanceCents={cents}
+                  />
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

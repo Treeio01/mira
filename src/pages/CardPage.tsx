@@ -2,8 +2,8 @@ import { memo, useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { BalanceCard } from '../components/sections/BalanceCard';
 import { InfoRow } from '../components/ui/InfoRow';
+import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
 import { BackBottomBar } from '../components/ui/BackBottomBar';
-import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 
@@ -30,36 +30,6 @@ const CloseIcon = memo(function CloseIcon() {
     </svg>
   );
 });
-
-function CardPageSkeleton() {
-  return (
-    <>
-      <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
-        {/* BalanceCard skeleton */}
-        <div className="rounded-2xl overflow-hidden p-5 flex flex-col gap-4 bg-white/[0.04]">
-          <div className="flex flex-col gap-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-10 w-40" />
-          </div>
-          <div className="flex justify-between">
-            <Skeleton className="h-11 w-40 rounded-lg" />
-            <Skeleton className="h-11 w-24 rounded-lg" />
-          </div>
-        </div>
-        {/* Info rows skeleton */}
-        <div className="flex flex-col gap-1.5">
-          {Array.from({ length: 7 }, (_, i) => (
-            <div key={i} className="flex w-full items-center justify-between rounded-lg py-3 px-4 bg-[#181424]">
-              <Skeleton className="h-3.5 w-24" />
-              <Skeleton className="h-3.5 w-32" />
-            </div>
-          ))}
-        </div>
-      </div>
-      <BackBottomBar />
-    </>
-  );
-}
 
 export function CardPage() {
   const { id } = useParams();
@@ -115,60 +85,66 @@ export function CardPage() {
     );
   }
 
-  if (isLoading || !card) {
-    return <CardPageSkeleton />;
-  }
+  const showSkeleton = isLoading || !card;
 
   return (
     <>
       <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
-        <BalanceCard title="Баланс Карты" balance={card.balance} />
+        <BalanceCard title="Баланс Карты" balance={card?.balance} loading={showSkeleton} />
 
         <div className="flex flex-col gap-1.5">
-          {isEditing ? (
-            <div className="flex w-full bg-[#181424] items-center justify-between rounded-lg gap-2.5 py-2 px-4">
-              <span className="text-[#A095BD] text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-                Имя карточки
-              </span>
-              <div className="flex gap-1.5 items-center">
-                <input
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  maxLength={64}
-                  autoFocus
-                  className="bg-transparent text-white text-sm font-medium text-right outline-none w-32"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSaveName();
-                    if (e.key === 'Escape') handleCancelEdit();
-                  }}
-                />
-                <button onClick={handleSaveName} className="active:scale-90 transition-transform">
-                  <CheckIcon />
-                </button>
-                <button onClick={handleCancelEdit} className="active:scale-90 transition-transform">
-                  <CloseIcon />
-                </button>
-              </div>
-            </div>
+          {showSkeleton ? (
+            Array.from({ length: 7 }, (_, i) => (
+              <InfoRowSkeleton key={i} />
+            ))
           ) : (
-            <InfoRow
-              label="Имя карточки"
-              value={card.card_name}
-              action={
-                <button onClick={handleStartEdit} className="active:scale-90 transition-transform">
-                  <EditIcon />
-                </button>
-              }
-            />
-          )}
-          <InfoRow label="Номер" value={card.number} copyValue={card.number} />
-          <InfoRow label="Месяц/год" value={card.date} copyValue={card.date} />
-          <InfoRow label="CVC" value={card.cvc} copyValue={card.cvc} />
-          <InfoRow label="Имя владельца" value={card.owner_name} copyValue={card.owner_name} />
-          <InfoRow label="Адрес" value={card.address} copyValue={card.address} />
-          <InfoRow label="Регион" value={card.region} copyValue={card.region} />
-          {card.warnings != null && (
-            <InfoRow label="Предупреждений" value={String(card.warnings)} />
+            <>
+              {isEditing ? (
+                <div className="flex w-full bg-[#181424] items-center justify-between rounded-lg gap-2.5 py-2 px-4">
+                  <span className="text-[#A095BD] text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
+                    Имя карточки
+                  </span>
+                  <div className="flex gap-1.5 items-center">
+                    <input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      maxLength={64}
+                      autoFocus
+                      className="bg-transparent text-white text-sm font-medium text-right outline-none w-32"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveName();
+                        if (e.key === 'Escape') handleCancelEdit();
+                      }}
+                    />
+                    <button onClick={handleSaveName} className="active:scale-90 transition-transform">
+                      <CheckIcon />
+                    </button>
+                    <button onClick={handleCancelEdit} className="active:scale-90 transition-transform">
+                      <CloseIcon />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <InfoRow
+                  label="Имя карточки"
+                  value={card.card_name}
+                  action={
+                    <button onClick={handleStartEdit} className="active:scale-90 transition-transform">
+                      <EditIcon />
+                    </button>
+                  }
+                />
+              )}
+              <InfoRow label="Номер" value={card.number} copyValue={card.number} />
+              <InfoRow label="Месяц/год" value={card.date} copyValue={card.date} />
+              <InfoRow label="CVC" value={card.cvc} copyValue={card.cvc} />
+              <InfoRow label="Имя владельца" value={card.owner_name} copyValue={card.owner_name} />
+              <InfoRow label="Адрес" value={card.address} copyValue={card.address} />
+              <InfoRow label="Регион" value={card.region} copyValue={card.region} />
+              {card.warnings != null && (
+                <InfoRow label="Предупреждений" value={String(card.warnings)} />
+              )}
+            </>
           )}
         </div>
       </div>

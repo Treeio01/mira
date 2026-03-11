@@ -21,18 +21,18 @@ export interface RefreshTokenResponse {
 
 // ── Main Menu ──
 
-export interface FavouriteCardItem {
+export interface FavoriteCardItem {
   card_id: number;
   type: string;
   number: string;
   balance: number;
-  is_favourite: boolean;
+  is_favorite: boolean;
 }
 
 export interface MainMenuResponse {
   main_balance: number;
   cards_balance: number;
-  favourite_cards: FavouriteCardItem[];
+  favourite_cards: FavoriteCardItem[];
 }
 
 // ── Cards ──
@@ -75,12 +75,12 @@ export interface CardInfoPayload {
   card_id: number;
 }
 
-export interface MakeCardFavouritePayload {
+export interface MakeFavoritePayload {
   card_id: number;
   is_favorite: boolean;
 }
 
-export interface MakeCardFavouriteResponse {
+export interface MakeFavoriteResponse {
   card_id: number;
   is_favorite: boolean;
   status: string;

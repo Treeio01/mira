@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import {
   getCards as apiGetCards,
   getCardInfo as apiGetCardInfo,
-  makeCardFavourite as apiMakeCardFavourite,
+  makeFavorite as apiMakeFavorite,
   updateCardName as apiUpdateCardName,
 } from '../services/api';
 import type { ListCardItem, CardInfoItem } from '../services/api';
@@ -23,7 +23,7 @@ interface CardsState {
 interface CardsActions {
   fetchCards: () => Promise<void>;
   fetchCardInfo: (cardId: number) => Promise<void>;
-  toggleFavourite: (cardId: number, isFavorite: boolean) => Promise<void>;
+  toggleFavorite: (cardId: number, isFavorite: boolean) => Promise<void>;
   renameCard: (cardId: number, name: string) => Promise<void>;
   clearCurrent: () => void;
 }
@@ -32,7 +32,7 @@ type CardsStore = CardsState & CardsActions;
 
 // ── Helpers ──
 
-let favouriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
+let favoriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
 
 // ── Store ──
 
@@ -68,7 +68,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
     }
   },
 
-  toggleFavourite: async (cardId, isFavorite) => {
+  toggleFavorite: async (cardId, isFavorite) => {
     const prevList = get().list;
     const prevCurrent = get().current;
 
@@ -83,7 +83,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
     });
 
     try {
-      await apiMakeCardFavourite({ card_id: cardId, is_favorite: isFavorite });
+      await apiMakeFavorite({ card_id: cardId, is_favorite: isFavorite });
     } catch {
       set({ list: prevList, current: prevCurrent });
     }
@@ -117,9 +117,9 @@ export const selectCurrentCardLoading = (s: CardsStore) => s.currentLoading;
 export const selectCurrentCardError = (s: CardsStore) => s.currentError;
 
 /** Стабильная ссылка — не создаёт новый массив если list не изменился */
-export const selectFavouriteCards = (s: CardsStore) => {
-  if (favouriteCache.ref === s.list) return favouriteCache.result;
+export const selectFavoriteCards = (s: CardsStore) => {
+  if (favoriteCache.ref === s.list) return favoriteCache.result;
   const result = s.list.filter((c) => c.is_favorite);
-  favouriteCache = { ref: s.list, result };
+  favoriteCache = { ref: s.list, result };
   return result;
 };

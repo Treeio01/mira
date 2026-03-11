@@ -1,7 +1,12 @@
 import { useMenuStore, selectCardsBalance } from '../../store';
 import { formatBalance } from '../../lib/format';
+import { Skeleton } from '../ui/Skeleton';
 
-export function CardBalance() {
+interface CardBalanceProps {
+  loading?: boolean;
+}
+
+export function CardBalance({ loading }: CardBalanceProps) {
   const cardsBalance = useMenuStore(selectCardsBalance);
   const { whole, cents } = formatBalance(cardsBalance);
 
@@ -14,9 +19,13 @@ export function CardBalance() {
         <span className="text-sm text-white/64 tracking-[-0.02em]">
           Общий баланс карт
         </span>
-        <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
-          {whole}<span className="text-white/64">{cents}</span>
-        </span>
+        {loading ? (
+          <Skeleton className="h-7 w-28" />
+        ) : (
+          <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
+            {whole}<span className="text-white/64">{cents}</span>
+          </span>
+        )}
       </div>
     </div>
   );

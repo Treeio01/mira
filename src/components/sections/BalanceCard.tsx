@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GradientHeader } from '../ui/GradientHeader';
+import { Skeleton } from '../ui/Skeleton';
 import { EyeIcon } from '../icons/EyeIcon';
 import { EyeHiddenIcon } from '../icons/EyeHiddenIcon';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -9,9 +10,10 @@ import { formatBalance } from '../../lib/format';
 interface BalanceCardProps {
   title?: string;
   balance?: number;
+  loading?: boolean;
 }
 
-export function BalanceCard({ title = 'Основной баланс', balance }: BalanceCardProps) {
+export function BalanceCard({ title = 'Основной баланс', balance, loading }: BalanceCardProps) {
   const [visible, setVisible] = useState(true);
   const mainBalance = useMenuStore(selectMainBalance);
   const userId = useAuthStore((s) => s.userId);
@@ -25,7 +27,9 @@ export function BalanceCard({ title = 'Основной баланс', balance }
           {title}
         </span>
         <div className="flex items-center gap-4">
-          {visible ? (
+          {loading ? (
+            <Skeleton className="h-10 w-44" />
+          ) : visible ? (
             <span className="font-semibold flex text-[36px] leading-[112%] tracking-[-0.01em] text-white">
               {whole}<span className="text-white/64">{cents}</span>
             </span>
@@ -34,9 +38,11 @@ export function BalanceCard({ title = 'Основной баланс', balance }
               **********
             </span>
           )}
-          <button onClick={() => setVisible(!visible)}>
-            {visible ? <EyeIcon /> : <EyeHiddenIcon />}
-          </button>
+          {!loading && (
+            <button onClick={() => setVisible(!visible)}>
+              {visible ? <EyeIcon /> : <EyeHiddenIcon />}
+            </button>
+          )}
         </div>
       </div>
 

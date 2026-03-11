@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { getMainMenu as apiGetMainMenu } from '../services/api';
-import type { FavouriteCardItem } from '../services/api';
+import type { FavoriteCardItem } from '../services/api';
 import { extractErrorMessage } from '../lib/error';
 
 // ── Types ──
@@ -8,7 +8,7 @@ import { extractErrorMessage } from '../lib/error';
 interface MenuState {
   mainBalance: number;
   cardsBalance: number;
-  favouriteCards: FavouriteCardItem[];
+  favoriteCards: FavoriteCardItem[];
   isLoading: boolean;
   error: string | null;
 }
@@ -24,7 +24,7 @@ type MenuStore = MenuState & MenuActions;
 export const useMenuStore = create<MenuStore>()((set, get) => ({
   mainBalance: 0,
   cardsBalance: 0,
-  favouriteCards: [],
+  favoriteCards: [],
   isLoading: false,
   error: null,
 
@@ -37,7 +37,7 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
       set({
         mainBalance: data.main_balance,
         cardsBalance: data.cards_balance,
-        favouriteCards: data.favourite_cards,
+        favoriteCards: data.favourite_cards,
         isLoading: false,
       });
     } catch (e) {
@@ -50,6 +50,6 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
 
 export const selectMainBalance = (s: MenuStore) => s.mainBalance;
 export const selectCardsBalance = (s: MenuStore) => s.cardsBalance;
-export const selectMenuFavourites = (s: MenuStore) => s.favouriteCards;
+export const selectMenuFavorites = (s: MenuStore) => s.favoriteCards;
 export const selectMenuLoading = (s: MenuStore) => s.isLoading;
 export const selectMenuError = (s: MenuStore) => s.error;

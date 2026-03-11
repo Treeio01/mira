@@ -3,8 +3,8 @@ import type {
   CardInfoPayload,
   ListCardsResponse,
   CardInfoResponse,
-  MakeCardFavouritePayload,
-  MakeCardFavouriteResponse,
+  MakeFavoritePayload,
+  MakeFavoriteResponse,
   UpdateCardNamePayload,
   UpdateCardNameResponse,
 } from './types';
@@ -19,8 +19,8 @@ export async function getCardInfo(payload: CardInfoPayload): Promise<CardInfoRes
   });
 }
 
-export async function makeCardFavourite(payload: MakeCardFavouritePayload): Promise<MakeCardFavouriteResponse> {
-  return apiRequest<MakeCardFavouriteResponse>('/api/v1/make_card_favourite', {
+export async function makeFavorite(payload: MakeFavoritePayload): Promise<MakeFavoriteResponse> {
+  return apiRequest<MakeFavoriteResponse>('/api/v1/make_card_favourite', {
     body: payload,
   });
 }

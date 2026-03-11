@@ -16,14 +16,14 @@ export {
   selectCurrentCard,
   selectCurrentCardLoading,
   selectCurrentCardError,
-  selectFavouriteCards,
+  selectFavoriteCards,
 } from './cards';
 
 export {
   useMenuStore,
   selectMainBalance,
   selectCardsBalance,
-  selectMenuFavourites,
+  selectMenuFavorites,
   selectMenuLoading,
   selectMenuError,
 } from './menu';
