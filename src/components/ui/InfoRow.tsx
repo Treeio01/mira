@@ -13,18 +13,18 @@ export function InfoRow({ label, value, copyValue, action }: InfoRowProps) {
 
   return (
     <div className="flex w-full bg-[#181424] items-center justify-between rounded-lg gap-2.5 py-3 px-4">
-      <span className="text-[#A095BD] overflow-hidden text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap text-ellipsis">
+      <span className="text-[#A095BD] shrink-0 text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
         {label}
       </span>
       {showAction ? (
-        <div className="flex gap-1.5 items-center">
-          <span className="text-white max-w-[300px]  whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium leading-[140%] tracking-[-0.02em]">
+        <div className="flex gap-1.5 items-center min-w-0">
+          <span className="text-white whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium leading-[140%] tracking-[-0.02em]">
             {value}
           </span>
           {showAction}
         </div>
       ) : (
-        <span className="text-white max-w-[300px] whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium leading-[140%] tracking-[-0.02em]">
+        <span className="text-white whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium leading-[140%] tracking-[-0.02em]">
           {value}
         </span>
       )}
