@@ -31,7 +31,7 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
       className="flex p-1.5 w-full items-start justify-between bg-[#15111F] rounded-2xl border border-[#2A223E] cursor-pointer active:scale-[0.98] transition-transform duration-150"
       onClick={handleClick}
     >
-      <div className="flex gap-3 items-center">
+      <div className="flex gap-3 items-center min-w-0 flex-1">
         <MiniCard
           variant={resolveCardVariant(card.type)}
           lastDigits={lastDigits}
@@ -39,8 +39,8 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
           balanceCents={cents}
           balanceHidden={!balanceVisible}
         />
-        <div className="flex flex-col gap-1.5">
-          <span className="text-white font-medium text-xs tracking-[-0.02em]">
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <span className="text-white font-medium text-xs tracking-[-0.02em] truncate">
             {card.card_name || card.type}
           </span>
           <span className="text-white flex font-semibold text-sm tracking-[-0.02em]">

@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useCallback } from 'react';
+import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { BalanceCard } from '../components/sections/BalanceCard';
 import { InfoRow } from '../components/ui/InfoRow';
@@ -56,8 +56,11 @@ export function CardPage() {
     return () => clearCurrent();
   }, [cardId, fetchCardInfo, clearCurrent]);
 
+  const modalShown = useRef(false);
+
   useEffect(() => {
-    if (card) {
+    if (card && !modalShown.current) {
+      modalShown.current = true;
       showModal({
         icon: <WarningIcon />,
         title: 'Важно',
