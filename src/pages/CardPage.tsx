@@ -5,6 +5,8 @@ import { InfoRow } from '../components/ui/InfoRow';
 import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
 import { BackBottomBar } from '../components/ui/BackBottomBar';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
+import { useModal } from '../components/ui/ModalProvider';
+import { WarningIcon } from '../components/icons/WarningIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 
 const EditIcon = memo(function EditIcon() {
@@ -40,6 +42,8 @@ export function CardPage() {
   const clearCurrent = useCardsStore((s) => s.clearCurrent);
   const renameCard = useCardsStore((s) => s.renameCard);
 
+  const { showModal } = useModal();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
 
@@ -51,6 +55,17 @@ export function CardPage() {
     }
     return () => clearCurrent();
   }, [cardId, fetchCardInfo, clearCurrent]);
+
+  useEffect(() => {
+    if (card) {
+      showModal({
+        icon: <WarningIcon />,
+        title: 'Важно',
+        description: 'Отклонённые транзакции запрещены. Ваша карта может быть заблокирована при большом количестве предупреждений.',
+        buttonText: 'Продолжить',
+      });
+    }
+  }, [card, showModal]);
 
   const handleStartEdit = useCallback(() => {
     if (card) {
