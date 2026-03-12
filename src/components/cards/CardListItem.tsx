@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MiniCard } from './MiniCard';
 import { StarIcon } from '../icons/StarIcon';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
+import { useUiStore, selectBalanceVisible } from '../../store';
 import type { ListCardItem } from '../../services/api';
 
 interface CardListItemProps {
@@ -14,6 +15,7 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
   const { whole, cents } = formatBalance(card.balance);
   const lastDigits = getLastDigits(card.number);
   const navigate = useNavigate();
+  const balanceVisible = useUiStore(selectBalanceVisible);
 
   const handleClick = useCallback(() => {
     navigate(`/cards/${card.card_id}`);
@@ -35,13 +37,14 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
           lastDigits={lastDigits}
           balance={whole}
           balanceCents={cents}
+          balanceHidden={!balanceVisible}
         />
         <div className="flex flex-col gap-1.5">
           <span className="text-white font-medium text-xs tracking-[-0.02em]">
             {card.card_name || card.type}
           </span>
           <span className="text-white flex font-semibold text-sm tracking-[-0.02em]">
-            {whole}<span className="text-white/64">{cents}</span>
+            {balanceVisible ? <>{whole}<span className="text-white/64">{cents}</span></> : '***'}
           </span>
           <span className="text-white/72 font-medium text-xs tracking-[-0.02em]">
             *{lastDigits}

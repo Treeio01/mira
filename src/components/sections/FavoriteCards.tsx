@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircleIcon } from '../icons/PlusCircleIcon';
 import { MiniCard } from '../cards/MiniCard';
 import { Skeleton } from '../ui/Skeleton';
-import { useMenuStore, selectMenuFavorites } from '../../store';
+import { useMenuStore, useUiStore, selectMenuFavorites, selectBalanceVisible } from '../../store';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
 
 interface FavoriteCardsProps {
@@ -12,6 +12,7 @@ interface FavoriteCardsProps {
 export function FavoriteCards({ loading }: FavoriteCardsProps) {
   const navigate = useNavigate();
   const favorites = useMenuStore(selectMenuFavorites);
+  const balanceVisible = useUiStore(selectBalanceVisible);
 
   if (!loading && favorites.length === 0) return null;
 
@@ -44,6 +45,7 @@ export function FavoriteCards({ loading }: FavoriteCardsProps) {
                     lastDigits={getLastDigits(card.number)}
                     balance={whole}
                     balanceCents={cents}
+                    balanceHidden={!balanceVisible}
                   />
                 </div>
               );

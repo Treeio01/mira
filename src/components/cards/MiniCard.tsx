@@ -23,9 +23,10 @@ interface MiniCardProps {
   lastDigits: string;
   balance: string;
   balanceCents: string;
+  balanceHidden?: boolean;
 }
 
-export const MiniCard = memo(function MiniCard({ variant, lastDigits, balance, balanceCents }: MiniCardProps) {
+export const MiniCard = memo(function MiniCard({ variant, lastDigits, balance, balanceCents, balanceHidden }: MiniCardProps) {
   const Logo = variantLogos[variant];
 
   return (
@@ -38,7 +39,7 @@ export const MiniCard = memo(function MiniCard({ variant, lastDigits, balance, b
         *{lastDigits}
       </span>
       <span className="font-semibold text-sm leading-[140%] tracking-[-0.01em] text-white">
-        {balance}<span className="text-white/50">{balanceCents}</span>
+        {balanceHidden ? '***' : <>{balance}<span className="text-white/50">{balanceCents}</span></>}
       </span>
     </div>
   );

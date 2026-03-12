@@ -27,3 +27,8 @@ export {
   selectMenuLoading,
   selectMenuError,
 } from './menu';
+
+export {
+  useUiStore,
+  selectBalanceVisible,
+} from './ui';

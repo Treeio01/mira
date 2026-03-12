@@ -1,4 +1,4 @@
-import { useMenuStore, selectCardsBalance } from '../../store';
+import { useMenuStore, useUiStore, selectCardsBalance, selectBalanceVisible } from '../../store';
 import { formatBalance } from '../../lib/format';
 import { Skeleton } from '../ui/Skeleton';
 
@@ -8,6 +8,7 @@ interface CardBalanceProps {
 
 export function CardBalance({ loading }: CardBalanceProps) {
   const cardsBalance = useMenuStore(selectCardsBalance);
+  const visible = useUiStore(selectBalanceVisible);
   const { whole, cents } = formatBalance(cardsBalance);
 
   return (
@@ -21,9 +22,13 @@ export function CardBalance({ loading }: CardBalanceProps) {
         </span>
         {loading ? (
           <Skeleton className="h-7 w-28" />
-        ) : (
+        ) : visible ? (
           <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
             {whole}<span className="text-white/64">{cents}</span>
+          </span>
+        ) : (
+          <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
+            ******
           </span>
         )}
       </div>

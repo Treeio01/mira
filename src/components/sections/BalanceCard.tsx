@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { GradientHeader } from '../ui/GradientHeader';
 import { Skeleton } from '../ui/Skeleton';
 import { EyeIcon } from '../icons/EyeIcon';
 import { EyeHiddenIcon } from '../icons/EyeHiddenIcon';
 import { PlusIcon } from '../icons/PlusIcon';
-import { useMenuStore, useAuthStore, selectMainBalance } from '../../store';
+import { useMenuStore, useAuthStore, useUiStore, selectMainBalance, selectBalanceVisible } from '../../store';
 import { formatBalance } from '../../lib/format';
 
 interface BalanceCardProps {
@@ -14,7 +13,8 @@ interface BalanceCardProps {
 }
 
 export function BalanceCard({ title = 'Основной баланс', balance, loading }: BalanceCardProps) {
-  const [visible, setVisible] = useState(true);
+  const visible = useUiStore(selectBalanceVisible);
+  const toggleVisible = useUiStore((s) => s.toggleBalanceVisible);
   const mainBalance = useMenuStore(selectMainBalance);
   const userId = useAuthStore((s) => s.userId);
   const displayBalance = balance ?? mainBalance;
@@ -39,7 +39,7 @@ export function BalanceCard({ title = 'Основной баланс', balance, 
             </span>
           )}
           {!loading && (
-            <button onClick={() => setVisible(!visible)}>
+            <button onClick={toggleVisible}>
               {visible ? <EyeIcon /> : <EyeHiddenIcon />}
             </button>
           )}
