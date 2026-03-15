@@ -4,6 +4,7 @@ import { MiniCard } from '../cards/MiniCard';
 import { Skeleton } from '../ui/Skeleton';
 import { useMenuStore, useUiStore, selectMenuFavorites, selectBalanceVisible } from '../../store';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
+import { ROUTES } from '../../lib/routes';
 
 interface FavoriteCardsProps {
   loading?: boolean;
@@ -22,10 +23,10 @@ export function FavoriteCards({ loading }: FavoriteCardsProps) {
         Избранные карты
       </span>
       <div className="flex gap-1.5 items-stretch">
-        <button className="py-8 px-5 border border-[#452686] rounded-xl flex items-center justify-center bg-linear-to-br from-[#1C1132] via-[#2B145D] to-[#1C1132]">
+        <button onClick={() => navigate(ROUTES.CARDS_CREATE)} className="py-8 px-5 border border-[#452686] rounded-xl flex items-center justify-center bg-linear-to-br from-[#1C1132] via-[#2B145D] to-[#1C1132]">
           <PlusCircleIcon />
         </button>
-        <div className="flex w-full overflow-x-scroll gap-1.5">
+        <div className="flex w-full overflow-x-scroll gap-1.5 items-stretch">
           {loading ? (
             <>
               <Skeleton className="h-22 min-w-36 rounded-xl" />
@@ -37,7 +38,7 @@ export function FavoriteCards({ loading }: FavoriteCardsProps) {
               return (
                 <div
                   key={card.card_id}
-                  onClick={() => navigate(`/cards/${card.card_id}`)}
+                  onClick={() => navigate(ROUTES.CARD(card.card_id))}
                   className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
                 >
                   <MiniCard

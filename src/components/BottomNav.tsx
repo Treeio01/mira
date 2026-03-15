@@ -2,10 +2,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
 import { HomeIcon } from './icons/HomeIcon';
 import { CardsIcon } from './icons/CardsIcon';
+import { ROUTES } from '../lib/routes';
 
 const tabs = [
-  { path: '/', label: 'Меню', Icon: HomeIcon },
-  { path: '/cards', label: 'Карты', Icon: CardsIcon },
+  { path: ROUTES.HOME, label: 'Меню', Icon: HomeIcon },
+  { path: ROUTES.CARDS, label: 'Карты', Icon: CardsIcon },
 ] as const;
 
 export function BottomNav() {

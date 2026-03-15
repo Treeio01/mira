@@ -31,7 +31,7 @@ export const MiniCard = memo(function MiniCard({ variant, lastDigits, balance, b
 
   return (
     <div
-      className="flex min-w-36 p-3 rounded-xl flex-col justify-between"
+      className="flex min-w-36 h-full p-3 rounded-xl flex-col justify-between"
       style={variantStyles[variant]}
     >
       <Logo />

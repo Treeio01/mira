@@ -6,6 +6,7 @@ import { ActionCard } from '../cards/ActionCard';
 import { BankIcon } from '../icons/BankIcon';
 import { ReferralIcon } from '../icons/ReferralIcon';
 import { PuzzleIcon } from '../icons/PuzzleIcon';
+import { ROUTES } from '../../lib/routes';
 
 export function QuickActions() {
   return (
@@ -20,7 +21,7 @@ export function QuickActions() {
           icon={<ReferralIcon />}
           image={reffererSystem}
           label={<>Реферальная<br />система</>}
-          to="/reffer"
+          to={ROUTES.REFERRAL}
         />
       </div>
       <div className="flex w-full gap-1.5">
@@ -28,6 +29,7 @@ export function QuickActions() {
           icon={<PuzzleIcon />}
           image={eSim}
           label={<>eSIM<br />карты</>}
+          to={ROUTES.ESIM}
         />
         <ActionCard
           icon={<PuzzleIcon />}

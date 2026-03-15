@@ -7,6 +7,7 @@ import {
 } from '../services/api';
 import type { ListCardItem, CardInfoItem } from '../services/api';
 import { extractErrorMessage } from '../lib/error';
+import { createStaleTracker } from '../lib/stale';
 
 // ── Types ──
 
@@ -33,6 +34,8 @@ type CardsStore = CardsState & CardsActions;
 // ── Helpers ──
 
 let favoriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
+const cardsStale = createStaleTracker();
+let cardInfoAbort: AbortController | null = null;
 
 // ── Store ──
 
@@ -46,11 +49,12 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   currentError: null,
 
   fetchCards: async () => {
-    if (get().listLoading) return;
+    if (get().listLoading || cardsStale.isFresh()) return;
     set({ listLoading: true, listError: null });
 
     try {
       const { list_cards } = await apiGetCards();
+      cardsStale.markFresh();
       set({ list: list_cards, listLoading: false });
     } catch (e) {
       set({ listError: extractErrorMessage(e, 'Не удалось загрузить карты'), listLoading: false });
@@ -58,13 +62,21 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   },
 
   fetchCardInfo: async (cardId) => {
+    cardInfoAbort?.abort();
+    const controller = new AbortController();
+    cardInfoAbort = controller;
+
     set({ currentLoading: true, currentError: null });
 
     try {
-      const { card_info } = await apiGetCardInfo({ card_id: cardId });
-      set({ current: card_info, currentLoading: false });
+      const { card_info } = await apiGetCardInfo({ card_id: cardId }, controller.signal);
+      if (!controller.signal.aborted) {
+        set({ current: card_info, currentLoading: false });
+      }
     } catch (e) {
-      set({ currentError: extractErrorMessage(e, 'Не удалось загрузить карту'), currentLoading: false });
+      if (!controller.signal.aborted) {
+        set({ currentError: extractErrorMessage(e, 'Не удалось загрузить карту'), currentLoading: false });
+      }
     }
   },
 
@@ -103,7 +115,11 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
     }
   },
 
-  clearCurrent: () => set({ current: null, currentError: null, currentLoading: false }),
+  clearCurrent: () => {
+    cardInfoAbort?.abort();
+    cardInfoAbort = null;
+    set({ current: null, currentError: null, currentLoading: false });
+  },
 }));
 
 // ── Selectors ──

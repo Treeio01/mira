@@ -24,6 +24,7 @@ export function CopyButton({ text }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
+      aria-label="Копировать"
       className="flex-shrink-0 active:scale-90 transition-transform duration-150"
     >
       {copied ? (

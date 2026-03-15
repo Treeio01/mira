@@ -29,6 +29,35 @@ a {
   text-decoration: none;
 }
 
+/* ── Custom scrollbar ── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(102, 26, 255, 0.4) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(102, 26, 255, 0.4);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 26, 255, 0.7);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: rgba(102, 26, 255, 0.9);
+}
+
 @keyframes shimmer {
   100% {
     transform: translateX(100%);

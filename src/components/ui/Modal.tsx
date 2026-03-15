@@ -56,6 +56,47 @@ export const Modal = memo(function Modal({
     }
   }, [onButtonClick, onClose]);
 
+  // Focus trap
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (phase !== 'visible') return;
+
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    first?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [phase, onClose]);
+
   if (phase === 'closed') return null;
 
   const isVisible = phase === 'visible';
@@ -72,6 +113,10 @@ export const Modal = memo(function Modal({
       }}
     >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className="flex bg-[#15111F] rounded-xl border border-[#1C1828] w-full max-w-[362px] p-5 flex-col items-center gap-4"
         style={{
           opacity: isVisible ? 1 : 0,

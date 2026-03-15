@@ -1,0 +1,166 @@
+import { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { PageHeader } from "../components/ui/PageHeader";
+import { BackBottomBar } from "../components/ui/BackBottomBar";
+import { ErrorMessage } from "../components/ui/ErrorMessage";
+import { Skeleton } from "../components/ui/Skeleton";
+import { ConfirmFooter } from "../components/ui/ConfirmFooter";
+import { ROUTES } from "../lib/routes";
+import {
+  useIssueStore,
+  selectIssueCards,
+  selectIssueCardsLoading,
+  selectIssueCardsError,
+  selectBuying,
+  selectBuyError,
+} from "../store";
+
+export function CardConfirmPage() {
+  const { type } = useParams();
+  const navigate = useNavigate();
+  const parsed = type ? Number(type) : NaN;
+  const categoryId = Number.isFinite(parsed) ? parsed : null;
+
+  const cards = useIssueStore(selectIssueCards);
+  const isLoading = useIssueStore(selectIssueCardsLoading);
+  const error = useIssueStore(selectIssueCardsError);
+  const buying = useIssueStore(selectBuying);
+  const buyError = useIssueStore(selectBuyError);
+  const fetchCards = useIssueStore((s) => s.fetchCards);
+  const buyCard = useIssueStore((s) => s.buyCard);
+  const clearBuyError = useIssueStore((s) => s.clearBuyError);
+
+  const [amount, setAmount] = useState("");
+
+  useEffect(() => {
+    if (cards.length === 0) fetchCards();
+  }, [cards.length, fetchCards]);
+
+  const card = useMemo(
+    () => cards.find((c) => c.category_id === categoryId) ?? null,
+    [cards, categoryId],
+  );
+
+  const handleBuy = async () => {
+    if (!card || !amount) return;
+    const success = await buyCard(card.category_id, parseFloat(amount));
+    if (success) navigate(ROUTES.CARDS);
+  };
+
+  if (error) {
+    return (
+      <>
+        <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19 items-center justify-center">
+          <ErrorMessage message={error} onRetry={fetchCards} />
+        </div>
+        <BackBottomBar />
+      </>
+    );
+  }
+
+  if (isLoading || !card) {
+    return (
+      <>
+        <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
+          <PageHeader
+            title={
+              <>
+                Подтверждение
+                <br />
+                покупки карты
+              </>
+            }
+          />
+          <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        </div>
+        <BackBottomBar />
+      </>
+    );
+  }
+
+  const totalNum = amount ? parseFloat(amount) + card.price : card.price;
+
+  return (
+    <>
+      <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-19">
+        <PageHeader
+          title={
+            <>
+              Подтверждение
+              <br />
+              покупки карты
+            </>
+          }
+        />
+
+        <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+          <div className="flex flex-col gap-1.5 w-full">
+            <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+              {card.text_name}
+            </span>
+            <div className="flex flex-col gap-5">
+              <span className="text-white/64 font-medium text-[12px] leading-[140%] tracking-[-0.02em] whitespace-pre-line">
+                {card.description_full}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5 bg-[#231C33] rounded-[8px] p-4">
+            <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+              Запрещенные категории:
+            </span>
+            <span className="text-white/64 font-medium text-[12px] leading-[140%] tracking-[-0.02em]">
+              {card.restricted_categories}
+            </span>
+          </div>
+          <div className="flex flex-col gap-1.5 bg-[#231C33] rounded-[8px] p-4">
+            <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+              Запрещенные ГЕО для оплат:
+            </span>
+            <span className="text-white/64 font-medium text-[12px] leading-[140%] tracking-[-0.02em]">
+              {card.restricted_geos}
+            </span>
+          </div>
+          <div className="flex flex-col gap-1.5 bg-[#231C33] rounded-[8px] p-4">
+            <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+              Запрещенные MCC:
+            </span>
+            <span className="text-white/64 font-medium text-[12px] leading-[140%] tracking-[-0.02em]">
+              {card.restricted_mcc}
+            </span>
+          </div>
+        </div>
+
+        <ConfirmFooter
+          total={totalNum}
+          buying={buying}
+          buyError={buyError}
+          disabled={!amount || parseFloat(amount) < card.min_top_up}
+          onConfirm={handleBuy}
+        >
+          <div className="flex flex-col w-full gap-1.5">
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                clearBuyError();
+              }}
+              placeholder="Введите сумму пополнения"
+              className="w-full bg-[#221C33] rounded-lg p-4 text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <span className="text-white/40 text-center font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+              Минимальная сумма пополнения для <br /> активации карты -{" "}
+              ${card.min_top_up.toFixed(2)}
+            </span>
+          </div>
+        </ConfirmFooter>
+      </div>
+      <BackBottomBar />
+    </>
+  );
+}

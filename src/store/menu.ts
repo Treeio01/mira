@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { getMainMenu as apiGetMainMenu } from '../services/api';
 import type { FavoriteCardItem } from '../services/api';
 import { extractErrorMessage } from '../lib/error';
+import { createStaleTracker } from '../lib/stale';
+
+const menuStale = createStaleTracker();
 
 // ── Types ──
 
@@ -29,11 +32,12 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
   error: null,
 
   fetchMenu: async () => {
-    if (get().isLoading) return;
+    if (get().isLoading || menuStale.isFresh()) return;
     set({ isLoading: true, error: null });
 
     try {
       const data = await apiGetMainMenu();
+      menuStale.markFresh();
       set({
         mainBalance: data.main_balance,
         cardsBalance: data.cards_balance,

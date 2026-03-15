@@ -10,19 +10,25 @@ let refreshPromise: Promise<RefreshTokenResponse> | null = null;
 async function fetchWithTimeout(
   url: string,
   init: RequestInit,
+  externalSignal?: AbortSignal,
 ): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+  const onExternalAbort = () => controller.abort();
+  externalSignal?.addEventListener('abort', onExternalAbort);
 
   try {
     return await fetch(url, { ...init, signal: controller.signal });
   } catch (e) {
     if (e instanceof DOMException && e.name === 'AbortError') {
+      if (externalSignal?.aborted) throw e;
       throw new ApiError(0, 'Превышено время ожидания');
     }
     throw new ApiError(0, 'Нет соединения с сервером');
   } finally {
     clearTimeout(timer);
+    externalSignal?.removeEventListener('abort', onExternalAbort);
   }
 }
 
@@ -73,9 +79,10 @@ export async function apiRequest<T>(
     method?: string;
     body?: unknown;
     skipAuth?: boolean;
+    signal?: AbortSignal;
   } = {},
 ): Promise<T> {
-  const { method = 'POST', body, skipAuth = false } = options;
+  const { method = 'POST', body, skipAuth = false, signal } = options;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -94,7 +101,7 @@ export async function apiRequest<T>(
     body: body != null ? JSON.stringify(body) : undefined,
   };
 
-  const res = await fetchWithTimeout(`${BASE_URL}${endpoint}`, init);
+  const res = await fetchWithTimeout(`${BASE_URL}${endpoint}`, init, signal);
 
   // Авто-refresh при 401
   if (res.status === 401 && !skipAuth && tokenStorage.hasToken()) {

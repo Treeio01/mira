@@ -40,7 +40,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
           </span>
           <button
             onClick={() => register()}
-            className="mt-2 px-6 py-3 bg-[#661AFF] rounded-lg text-white font-medium text-sm active:scale-95 transition-transform"
+            className="mt-2 px-6 py-3 bg-[#661AFF] rounded-lg text-white font-medium text-sm active:scale-[0.97] transition-transform"
           >
             Попробовать снова
           </button>

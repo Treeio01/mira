@@ -97,6 +97,70 @@ export interface UpdateCardNameResponse {
   status: string;
 }
 
+// ── Ref Info ──
+
+export interface RefInfoData {
+  referral_link: string;
+  total_referrals: number;
+  referral_income: number;
+}
+
+export interface RefInfoResponse {
+  ref_info: RefInfoData;
+}
+
+// ── Issue Cards ──
+
+export interface IssueCardCategory {
+  category_name: string;
+  category_id: number;
+  text_name: string;
+  description: string;
+  description_full: string;
+  restricted_categories: string;
+  restricted_geos: string;
+  restricted_mcc: string;
+  top_up_comission: number;
+  price: number;
+  min_top_up: number;
+}
+
+export interface GetAvailableCardsResponse {
+  cards_list: IssueCardCategory[];
+}
+
+export interface ConfirmBuyCardPayload {
+  category_id: number;
+  amount_top_up: number;
+}
+
+export interface ConfirmBuyCardResponse {
+  result: { status: string };
+}
+
+// ── eSIM ──
+
+export interface EsimCategory {
+  category_name: string;
+  category_id: number;
+  text_name: string;
+  description: string;
+  description_full: string;
+  price: number;
+}
+
+export interface GetAvailableEsimResponse {
+  esim_list: EsimCategory[];
+}
+
+export interface ConfirmBuyEsimPayload {
+  category_id: number;
+}
+
+export interface ConfirmBuyEsimResponse {
+  result: { status: string };
+}
+
 // ── Errors ──
 
 export interface ApiErrorResponse {

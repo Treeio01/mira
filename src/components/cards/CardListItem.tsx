@@ -5,6 +5,7 @@ import { StarIcon } from '../icons/StarIcon';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
 import { useUiStore, selectBalanceVisible } from '../../store';
 import type { ListCardItem } from '../../services/api';
+import { ROUTES } from '../../lib/routes';
 
 interface CardListItemProps {
   card: ListCardItem;
@@ -18,7 +19,7 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
   const balanceVisible = useUiStore(selectBalanceVisible);
 
   const handleClick = useCallback(() => {
-    navigate(`/cards/${card.card_id}`);
+    navigate(ROUTES.CARD(card.card_id));
   }, [navigate, card.card_id]);
 
   const handleToggle = useCallback((e: React.MouseEvent) => {
@@ -28,7 +29,7 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
 
   return (
     <div
-      className="flex p-1.5 w-full items-start justify-between bg-[#15111F] rounded-2xl border border-[#2A223E] cursor-pointer active:scale-[0.98] transition-transform duration-150"
+      className="flex p-1.5 w-full items-start justify-between bg-[#15111F] rounded-2xl border border-[#2A223E] cursor-pointer active:scale-[0.97] transition-transform duration-150"
       onClick={handleClick}
     >
       <div className="flex gap-3 items-center min-w-0 flex-1">

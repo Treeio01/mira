@@ -1,10 +1,38 @@
+import { useEffect } from 'react';
 import { GradientHeader } from '../components/ui/GradientHeader';
 import { InfoRow } from '../components/ui/InfoRow';
+import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
+import { CopyButton } from '../components/ui/CopyButton';
 import { BackBottomBar } from '../components/ui/BackBottomBar';
+import { ErrorMessage } from '../components/ui/ErrorMessage';
+import { UserIdBadge } from '../components/ui/UserIdBadge';
+import { useReferralStore, selectRefData, selectRefLoading, selectRefError } from '../store';
 import blurImage from '../assets/img/reffer-header-blur-img.png';
 import noBlurImage from '../assets/img/reffer-header-img.png';
 
 export function RefferPage() {
+  const data = useReferralStore(selectRefData);
+  const isLoading = useReferralStore(selectRefLoading);
+  const error = useReferralStore(selectRefError);
+  const fetchRefInfo = useReferralStore((s) => s.fetchRefInfo);
+
+  useEffect(() => {
+    fetchRefInfo();
+  }, [fetchRefInfo]);
+
+  if (error) {
+    return (
+      <>
+        <div className="flex relative flex-col p-4 gap-4 w-full h-full mb-18 items-center justify-center">
+          <ErrorMessage message={error} onRetry={fetchRefInfo} />
+        </div>
+        <BackBottomBar />
+      </>
+    );
+  }
+
+  const showSkeleton = isLoading || !data;
+
   return (
     <>
       <div className="flex relative flex-col p-4 gap-4 w-full h-full mb-18">
@@ -14,22 +42,23 @@ export function RefferPage() {
           <span className="text-white font-semibold text-2xl leading-[120%] tracking-[-0.02em] z-10">
             Реферальная<br />система
           </span>
-          <div className="flex py-3 px-4 h-max rounded-lg bg-black/24 backdrop-blur-[7px] items-center z-10">
-            <span className="text-white font-medium text-xs leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-              ID: 2831234
-            </span>
-          </div>
+          <UserIdBadge />
         </GradientHeader>
 
         <div className="flex flex-col gap-1.5 w-full">
           <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
             Ссылка для приглашения
           </span>
-          <InfoRow
-            label="http://t.me/MiraCardsBot?start=REF7261326004"
-            value=""
-            copyValue="http://t.me/MiraCardsBot?start=REF7261326004"
-          />
+          {showSkeleton ? (
+            <InfoRowSkeleton />
+          ) : (
+            <div className="flex w-full bg-[#181424] items-center rounded-lg gap-2.5 py-3 px-4">
+              <span className="text-[#A095BD] min-w-0 truncate text-sm font-medium leading-[140%] tracking-[-0.02em]">
+                {data.referral_link}
+              </span>
+              <CopyButton text={data.referral_link} />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 w-full">
@@ -37,7 +66,17 @@ export function RefferPage() {
             Статистика
           </span>
           <div className="flex flex-col gap-1.5 w-full">
-            <InfoRow label="Приглашено пользователей" value="512" />
+            {showSkeleton ? (
+              <>
+                <InfoRowSkeleton />
+                <InfoRowSkeleton />
+              </>
+            ) : (
+              <>
+                <InfoRow label="Приглашено пользователей" value={String(data.total_referrals)} />
+                <InfoRow label="Заработано" value={`$${data.referral_income.toFixed(2)}`} />
+              </>
+            )}
           </div>
         </div>
       </div>

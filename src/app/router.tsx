@@ -4,15 +4,24 @@ import { HomePage } from '../pages/HomePage';
 import { CardsPage } from '../pages/CardsPage';
 import { RefferPage } from '../pages/RefferPage';
 import { CardPage } from '../pages/CardPage';
+import { CardCreatePage } from '../pages/CardCreatePage';
+import { CardConfirmPage } from '../pages/CardConfirmPage';
+import { EsimPage } from '../pages/EsimPage';
+import { EsimConfirmPage } from '../pages/EsimConfirmPage';
+import { ROUTES } from '../lib/routes';
 
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      { path: '/', element: <HomePage /> },
-      { path: '/cards', element: <CardsPage /> },
-      { path: '/cards/:id', element: <CardPage /> },
-      { path: '/reffer', element: <RefferPage /> },
+      { path: ROUTES.HOME, element: <HomePage /> },
+      { path: ROUTES.CARDS, element: <CardsPage /> },
+      { path: ROUTES.CARDS_CREATE, element: <CardCreatePage /> },
+      { path: `${ROUTES.CARDS_CREATE}/:type`, element: <CardConfirmPage /> },
+      { path: `${ROUTES.CARDS}/:id`, element: <CardPage /> },
+      { path: ROUTES.ESIM, element: <EsimPage /> },
+      { path: `${ROUTES.ESIM}/:type`, element: <EsimConfirmPage /> },
+      { path: ROUTES.REFERRAL, element: <RefferPage /> },
     ],
   },
 ]);

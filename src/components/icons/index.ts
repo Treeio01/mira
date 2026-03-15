@@ -12,3 +12,6 @@ export { ReferralIcon } from './ReferralIcon';
 export { PuzzleIcon } from './PuzzleIcon';
 export { CopyIcon } from './CopyIcon';
 export { ArrowBackIcon } from './ArrowBackIcon';
+export { EditIcon } from './EditIcon';
+export { CheckIcon } from './CheckIcon';
+export { CloseIcon } from './CloseIcon';

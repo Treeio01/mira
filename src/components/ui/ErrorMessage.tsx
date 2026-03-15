@@ -10,7 +10,7 @@ export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-4 py-2 bg-[#661AFF] rounded-lg text-white text-sm font-medium active:scale-95 transition-transform"
+          className="px-4 py-2 bg-[#661AFF] rounded-lg text-white text-sm font-medium active:scale-[0.97] transition-transform"
         >
           Повторить
         </button>

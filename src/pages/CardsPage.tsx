@@ -5,7 +5,8 @@ import { CardListItem } from '../components/cards/CardListItem';
 import { CardListItemSkeleton } from '../components/cards/CardListItemSkeleton';
 import { IssueCardButton } from '../components/ui/IssueCardButton';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
-import { useCardsStore, useAuthStore, selectCards, selectCardsLoading, selectCardsError } from '../store';
+import { UserIdBadge } from '../components/ui/UserIdBadge';
+import { useCardsStore, selectCards, selectCardsLoading, selectCardsError } from '../store';
 import { getLastDigits } from '../lib/format';
 
 export function CardsPage() {
@@ -14,7 +15,6 @@ export function CardsPage() {
   const error = useCardsStore(selectCardsError);
   const fetchCards = useCardsStore((s) => s.fetchCards);
   const toggleFavorite = useCardsStore((s) => s.toggleFavorite);
-  const userId = useAuthStore((s) => s.userId);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -38,13 +38,7 @@ export function CardsPage() {
         <span className="text-white font-semibold text-2xl leading-[120%] tracking-[-0.02em] z-10">
           Ваши<br />карты
         </span>
-        {userId && (
-          <div className="flex py-3 px-4 h-max rounded-lg bg-black/24 backdrop-blur-[7px] items-center z-10">
-            <span className="text-white font-medium text-xs leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-              ID: {userId}
-            </span>
-          </div>
-        )}
+        <UserIdBadge />
       </GradientHeader>
 
       <SearchInput value={search} onChange={setSearch} placeholder="Поиск карты" />
