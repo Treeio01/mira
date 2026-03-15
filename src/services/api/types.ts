@@ -161,6 +161,36 @@ export interface ConfirmBuyEsimResponse {
   result: { status: string };
 }
 
+// ── Top-Up ──
+
+export interface TopUpMethodItem {
+  name: string;
+  name_text: string;
+  commission: number;
+  min_amount: number;
+  max_amount: number;
+  icon: string;
+}
+
+export interface GetTopUpsMethodResponse {
+  usd_to_rub: number | null;
+  methods: TopUpMethodItem[];
+}
+
+export interface GetTopUpsFinalAmountPayload {
+  method_name: string;
+  amount: number;
+}
+
+export interface GetTopUpsFinalAmountResponse {
+  method_name: string;
+  currency: string;
+  amount: number;
+  commission_percent: number;
+  final_amount: number;
+  final_amount_text: string;
+}
+
 // ── Errors ──
 
 export interface ApiErrorResponse {

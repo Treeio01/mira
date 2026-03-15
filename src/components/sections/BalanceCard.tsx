@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { GradientHeader } from "../ui/GradientHeader";
 import { Skeleton } from "../ui/Skeleton";
 import { EyeIcon } from "../icons/EyeIcon";
@@ -11,6 +12,7 @@ import {
   selectBalanceVisible,
 } from "../../store";
 import { formatBalance } from "../../lib/format";
+import { ROUTES } from "../../lib/routes";
 
 interface BalanceCardProps {
   title?: string;
@@ -25,6 +27,7 @@ export function BalanceCard({
   loading,
   status,
 }: BalanceCardProps) {
+  const navigate = useNavigate();
   const visible = useUiStore(selectBalanceVisible);
   const toggleVisible = useUiStore((s) => s.toggleBalanceVisible);
   const mainBalance = useMenuStore(selectMainBalance);
@@ -70,7 +73,7 @@ export function BalanceCard({
       </div>
 
       <div className="flex w-full justify-between z-10 items-stretch">
-        <button className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
+        <button onClick={() => navigate(ROUTES.TOP_UP)} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
           <PlusIcon />
           <span className="text-white font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
             Пополнить баланс

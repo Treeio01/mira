@@ -8,6 +8,7 @@ import { CardCreatePage } from '../pages/CardCreatePage';
 import { CardConfirmPage } from '../pages/CardConfirmPage';
 import { EsimPage } from '../pages/EsimPage';
 import { EsimConfirmPage } from '../pages/EsimConfirmPage';
+import { TopUpPage } from '../pages/TopUpPage';
 import { ROUTES } from '../lib/routes';
 
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.ESIM, element: <EsimPage /> },
       { path: `${ROUTES.ESIM}/:type`, element: <EsimConfirmPage /> },
       { path: ROUTES.REFERRAL, element: <RefferPage /> },
+      { path: ROUTES.TOP_UP, element: <TopUpPage /> },
     ],
   },
 ]);

@@ -3,7 +3,7 @@ import { GradientHeader } from '../components/ui/GradientHeader';
 import { InfoRow } from '../components/ui/InfoRow';
 import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
 import { CopyButton } from '../components/ui/CopyButton';
-import { BackBottomBar } from '../components/ui/BackBottomBar';
+import { PageLayout } from '../components/ui/PageLayout';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { UserIdBadge } from '../components/ui/UserIdBadge';
 import { useReferralStore, selectRefData, selectRefLoading, selectRefError } from '../store';
@@ -22,66 +22,59 @@ export function RefferPage() {
 
   if (error) {
     return (
-      <>
-        <div className="flex relative flex-col p-4 gap-4 w-full h-full mb-18 items-center justify-center">
-          <ErrorMessage message={error} onRetry={fetchRefInfo} />
-        </div>
-        <BackBottomBar />
-      </>
+      <PageLayout centered>
+        <ErrorMessage message={error} onRetry={fetchRefInfo} />
+      </PageLayout>
     );
   }
 
   const showSkeleton = isLoading || !data;
 
   return (
-    <>
-      <div className="flex relative flex-col p-4 gap-4 w-full h-full mb-18">
-        <GradientHeader isCustomBg={true} className="items-end justify-between gap-2.5">
-          <img src={blurImage} className="absolute top-0 right-[40px]" alt="" />
-          <img src={noBlurImage} className="absolute bottom-0 h-full right-[80px]" alt="" />
-          <span className="text-white font-semibold text-2xl leading-[120%] tracking-[-0.02em] z-10">
-            Реферальная<br />система
-          </span>
-          <UserIdBadge />
-        </GradientHeader>
+    <PageLayout>
+      <GradientHeader isCustomBg={true} className="items-end justify-between gap-2.5">
+        <img src={blurImage} className="absolute top-0 right-[40px]" alt="" />
+        <img src={noBlurImage} className="absolute bottom-0 h-full right-[80px]" alt="" />
+        <span className="text-white font-semibold text-2xl leading-[120%] tracking-[-0.02em] z-10">
+          Реферальная<br />система
+        </span>
+        <UserIdBadge />
+      </GradientHeader>
 
-        <div className="flex flex-col gap-1.5 w-full">
-          <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
-            Ссылка для приглашения
-          </span>
-          {showSkeleton ? (
-            <InfoRowSkeleton />
-          ) : (
-            <div className="flex w-full bg-[#181424] items-center rounded-lg gap-2.5 py-3 px-4">
-              <span className="text-[#A095BD] min-w-0 truncate text-sm font-medium leading-[140%] tracking-[-0.02em]">
-                {data.referral_link}
-              </span>
-              <CopyButton text={data.referral_link} />
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-3 w-full">
-          <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
-            Статистика
-          </span>
-          <div className="flex flex-col gap-1.5 w-full">
-            {showSkeleton ? (
-              <>
-                <InfoRowSkeleton />
-                <InfoRowSkeleton />
-              </>
-            ) : (
-              <>
-                <InfoRow label="Приглашено пользователей" value={String(data.total_referrals)} />
-                <InfoRow label="Заработано" value={`$${data.referral_income.toFixed(2)}`} />
-              </>
-            )}
+      <div className="flex flex-col gap-1.5 w-full">
+        <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
+          Ссылка для приглашения
+        </span>
+        {showSkeleton ? (
+          <InfoRowSkeleton />
+        ) : (
+          <div className="flex w-full bg-[#181424] items-center rounded-lg gap-2.5 py-3 px-4">
+            <span className="text-[#A095BD] min-w-0 truncate text-sm font-medium leading-[140%] tracking-[-0.02em]">
+              {data.referral_link}
+            </span>
+            <CopyButton text={data.referral_link} />
           </div>
-        </div>
+        )}
       </div>
 
-      <BackBottomBar />
-    </>
+      <div className="flex flex-col gap-3 w-full">
+        <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
+          Статистика
+        </span>
+        <div className="flex flex-col gap-1.5 w-full">
+          {showSkeleton ? (
+            <>
+              <InfoRowSkeleton />
+              <InfoRowSkeleton />
+            </>
+          ) : (
+            <>
+              <InfoRow label="Приглашено пользователей" value={String(data.total_referrals)} />
+              <InfoRow label="Заработано" value={`$${data.referral_income.toFixed(2)}`} />
+            </>
+          )}
+        </div>
+      </div>
+    </PageLayout>
   );
 }

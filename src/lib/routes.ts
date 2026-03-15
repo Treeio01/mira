@@ -7,4 +7,5 @@ export const ROUTES = {
   ESIM: '/esim',
   ESIM_CONFIRM: (categoryId: number) => `/esim/${categoryId}`,
   REFERRAL: '/reffer',
+  TOP_UP: '/top-up',
 } as const;
