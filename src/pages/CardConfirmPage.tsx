@@ -82,7 +82,11 @@ export function CardConfirmPage() {
     );
   }
 
-  const totalNum = amount ? parseFloat(amount) + card.price : card.price;
+  const amountNum = amount ? parseFloat(amount) : 0;
+  const totalNum = amountNum
+    ? card.price + amountNum * (1 + card.top_up_comission / 100)
+    : card.price;
+  const isBelowMin = amountNum > 0 && amountNum < card.min_top_up;
 
   return (
     <>
@@ -151,9 +155,9 @@ export function CardConfirmPage() {
                 clearBuyError();
               }}
               placeholder="Введите сумму пополнения"
-              className="w-full bg-[#221C33] rounded-lg p-4 text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className={`w-full bg-[#221C33] rounded-lg p-4 font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBelowMin ? "text-[#FF5C5C]" : "text-white"}`}
             />
-            <span className="text-white/40 text-center font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
+            <span className={`text-center font-medium text-[14px] leading-[140%] tracking-[-0.02em] ${isBelowMin ? "text-[#FF5C5C]" : "text-white/40"}`}>
               Минимальная сумма пополнения для <br /> активации карты -{" "}
               ${card.min_top_up.toFixed(2)}
             </span>
