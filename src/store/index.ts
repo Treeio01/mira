@@ -24,6 +24,7 @@ export {
   selectMainBalance,
   selectCardsBalance,
   selectMenuFavorites,
+  selectSupportUrl,
   selectMenuLoading,
   selectMenuError,
 } from './menu';

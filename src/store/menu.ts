@@ -6,12 +6,15 @@ import { createStaleTracker } from '../lib/stale';
 
 const menuStale = createStaleTracker();
 
+export const invalidateMenuCache = () => menuStale.invalidate();
+
 // ── Types ──
 
 interface MenuState {
   mainBalance: number;
   cardsBalance: number;
   favoriteCards: FavoriteCardItem[];
+  supportUrl: string;
   isLoading: boolean;
   error: string | null;
 }
@@ -28,6 +31,7 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
   mainBalance: 0,
   cardsBalance: 0,
   favoriteCards: [],
+  supportUrl: '',
   isLoading: false,
   error: null,
 
@@ -42,6 +46,7 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
         mainBalance: data.main_balance,
         cardsBalance: data.cards_balance,
         favoriteCards: data.favorite_cards ?? [],
+        supportUrl: data.support_url ?? '',
         isLoading: false,
       });
     } catch (e) {
@@ -55,5 +60,6 @@ export const useMenuStore = create<MenuStore>()((set, get) => ({
 export const selectMainBalance = (s: MenuStore) => s.mainBalance;
 export const selectCardsBalance = (s: MenuStore) => s.cardsBalance;
 export const selectMenuFavorites = (s: MenuStore) => s.favoriteCards;
+export const selectSupportUrl = (s: MenuStore) => s.supportUrl;
 export const selectMenuLoading = (s: MenuStore) => s.isLoading;
 export const selectMenuError = (s: MenuStore) => s.error;

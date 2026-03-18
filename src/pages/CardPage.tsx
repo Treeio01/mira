@@ -12,6 +12,7 @@ import { CheckIcon } from '../components/icons/CheckIcon';
 import { CloseIcon } from '../components/icons/CloseIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 import { useCardNameEdit } from '../hooks/useCardNameEdit';
+import { ROUTES } from '../lib/routes';
 
 export function CardPage() {
   const { id } = useParams();
@@ -65,7 +66,14 @@ export function CardPage() {
 
   return (
     <PageLayout>
-      <BalanceCard title="Баланс Карты" balance={card?.balance} loading={showSkeleton} status={card?.status} />
+      <BalanceCard
+        title="Баланс Карты"
+        balance={card?.balance}
+        loading={showSkeleton}
+        status={card?.status}
+        topUpRoute={cardId != null ? ROUTES.CARD_TOP_UP(cardId) : undefined}
+        topUpLabel="Пополнить карту"
+      />
 
       <div className="flex flex-col gap-1.5">
         {showSkeleton ? (

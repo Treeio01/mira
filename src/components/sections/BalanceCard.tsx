@@ -19,6 +19,8 @@ interface BalanceCardProps {
   balance?: number;
   loading?: boolean;
   status?: string;
+  topUpRoute?: string;
+  topUpLabel?: string;
 }
 
 export function BalanceCard({
@@ -26,6 +28,8 @@ export function BalanceCard({
   balance,
   loading,
   status,
+  topUpRoute,
+  topUpLabel = "Пополнить баланс",
 }: BalanceCardProps) {
   const navigate = useNavigate();
   const visible = useUiStore(selectBalanceVisible);
@@ -73,10 +77,10 @@ export function BalanceCard({
       </div>
 
       <div className="flex w-full justify-between z-10 items-stretch">
-        <button onClick={() => navigate(ROUTES.TOP_UP)} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
+        <button onClick={() => navigate(topUpRoute ?? ROUTES.TOP_UP)} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
           <PlusIcon />
           <span className="text-white font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-            Пополнить баланс
+            {topUpLabel}
           </span>
         </button>
         <UserIdBadge />

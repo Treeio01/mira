@@ -7,8 +7,22 @@ import { BankIcon } from '../icons/BankIcon';
 import { ReferralIcon } from '../icons/ReferralIcon';
 import { PuzzleIcon } from '../icons/PuzzleIcon';
 import { ROUTES } from '../../lib/routes';
+import { useMenuStore, selectSupportUrl } from '../../store';
+import { getWebApp } from '../../lib/telegram';
 
 export function QuickActions() {
+  const supportUrl = useMenuStore(selectSupportUrl);
+
+  const handleSupport = () => {
+    if (!supportUrl) return;
+    const webApp = getWebApp();
+    if (webApp) {
+      webApp.openLink(supportUrl);
+    } else {
+      window.open(supportUrl, '_blank');
+    }
+  };
+
   return (
     <div className="flex w-full gap-1.5 flex-col">
       <div className="flex w-full gap-1.5">
@@ -28,13 +42,14 @@ export function QuickActions() {
         <ActionCard
           icon={<PuzzleIcon />}
           image={eSim}
-          label={<>eSIM<br />карты</>}
+          label="eSIM"
           to={ROUTES.ESIM}
         />
         <ActionCard
           icon={<PuzzleIcon />}
           image={supportImg}
           label={<>Служба<br />поддержки</>}
+          onClick={handleSupport}
         />
       </div>
     </div>

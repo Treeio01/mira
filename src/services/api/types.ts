@@ -33,6 +33,7 @@ export interface MainMenuResponse {
   main_balance: number;
   cards_balance: number;
   favorite_cards: FavoriteCardItem[];
+  support_url: string;
 }
 
 // ── Cards ──
@@ -169,7 +170,7 @@ export interface TopUpMethodItem {
   commission: number;
   min_amount: number;
   max_amount: number;
-  icon: string;
+  icon?: string | null;
 }
 
 export interface GetTopUpsMethodResponse {
@@ -189,6 +190,64 @@ export interface GetTopUpsFinalAmountResponse {
   commission_percent: number;
   final_amount: number;
   final_amount_text: string;
+}
+
+// ── Card Top-Up ──
+
+export interface GetTopUpsMethodCardResponse {
+  user_balance: number;
+  max_amount: number;
+  usd_to_rub?: number | null;
+  methods: TopUpMethodItem[];
+}
+
+export interface GetTopUpsFinalAmountCardResponse {
+  method_name: string;
+  amount: number;
+  final_amount_usd: number;
+  final_amount_rub: number;
+  final_amount_text: string;
+}
+
+// ── Create Top-Up ──
+
+export interface CreateTopUpBalancePayload {
+  method_name: string;
+  amount: number;
+  final_amount: number;
+}
+
+export interface CreateTopUpBalanceResponse {
+  result: {
+    top_up_id: string;
+    method_name: string;
+    amount: number;
+    commission_percent: number;
+    currency: string;
+    final_amount_usd: number;
+    final_amount_rub: number;
+    final_amount_text: string;
+    payment_url: string;
+    status: string;
+  };
+}
+
+export interface CreateTopUpCardPayload {
+  card_id: number;
+  method_name: string;
+  amount: number;
+}
+
+export interface CreateTopUpCardResponse {
+  result: {
+    top_up_id: string;
+    card_id: number;
+    method_name: string;
+    amount: number;
+    final_amount: number;
+    payment_url?: string | null;
+    status: string;
+  };
 }
 
 // ── Errors ──

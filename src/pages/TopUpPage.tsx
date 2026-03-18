@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { PageLayout } from "../components/ui/PageLayout";
 import { ConfirmFooter } from "../components/ui/ConfirmFooter";
 import { ErrorMessage } from "../components/ui/ErrorMessage";
 import { Skeleton } from "../components/ui/Skeleton";
+import { MethodList } from "../components/ui/MethodList";
 import {
   useTopUpStore,
   selectTopUpMethods,
@@ -13,10 +14,15 @@ import {
   selectFinalAmount,
   selectFinalLoading,
 } from "../store";
+import { createTopUpBalance } from "../services/api";
+import { getWebApp } from "../lib/telegram";
+import { extractErrorMessage } from "../lib/error";
 
 export function TopUpPage() {
   const [amount, setAmount] = useState("");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const methods = useTopUpStore(selectTopUpMethods);
   const usdToRub = useTopUpStore(selectUsdToRub);
@@ -54,10 +60,32 @@ export function TopUpPage() {
 
   const displayTotal = finalData?.final_amount ?? amountNum;
 
-  const handleSubmit = () => {
-    if (!isValid) return;
-    // TODO: перенаправление на оплату
-  };
+  const handleSubmit = useCallback(async () => {
+    if (!isValid || !selectedMethod || !finalData) return;
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const { result } = await createTopUpBalance({
+        method_name: selectedMethod,
+        amount: amountNum,
+        final_amount: finalData.final_amount,
+      });
+
+      if (result.payment_url) {
+        const webApp = getWebApp();
+        if (webApp) {
+          webApp.openLink(result.payment_url);
+        } else {
+          window.open(result.payment_url, '_blank');
+        }
+      }
+    } catch (e) {
+      setSubmitError(extractErrorMessage(e, 'Не удалось создать пополнение'));
+    } finally {
+      setSubmitting(false);
+    }
+  }, [isValid, selectedMethod, amountNum, finalData]);
 
   if (methodsError) {
     return (
@@ -129,43 +157,18 @@ export function TopUpPage() {
           Способ оплаты
         </h2>
 
-        <div className="flex flex-col gap-1.5">
-          {methods.map((method) => {
-            const isSelected = selectedMethod === method.name;
-            return (
-              <button
-                key={method.name}
-                onClick={() => setSelectedMethod(method.name)}
-                className={`flex items-center w-full py-3 px-5 rounded-lg transition-colors ${
-                  isSelected
-                    ? "bg-[#211B30] border border-[#423660]"
-                    : "bg-[#181424] border border-transparent"
-                }`}
-              >
-                <img
-                  src={method.icon}
-                  alt={method.name_text}
-                  className="w-4 h-4 rounded-md object-contain"
-                />
-                <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em] ml-1.5 flex-1 text-left">
-                  {method.name_text}
-                </span>
-                <div
-                  className={`w-4 h-4 rounded-full border flex items-center justify-center border-white`}
-                >
-                  {isSelected && (
-                    <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                  )}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <MethodList
+          methods={methods}
+          selectedMethod={selectedMethod}
+          onSelect={setSelectedMethod}
+        />
       </div>
 
       <ConfirmFooter
         total={displayTotal}
         totalText={finalData?.final_amount_text}
+        buying={submitting}
+        buyError={submitError}
         disabled={!isValid || finalLoading}
         onConfirm={handleSubmit}
         buttonText={finalLoading ? "Расчёт..." : "Перейти к оплате"}

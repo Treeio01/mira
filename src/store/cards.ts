@@ -8,6 +8,7 @@ import {
 import type { ListCardItem, CardInfoItem } from '../services/api';
 import { extractErrorMessage } from '../lib/error';
 import { createStaleTracker } from '../lib/stale';
+import { invalidateMenuCache } from './menu';
 
 // ── Types ──
 
@@ -96,6 +97,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
 
     try {
       await apiMakeFavorite({ card_id: cardId, is_favorite: isFavorite });
+      invalidateMenuCache();
     } catch {
       set({ list: prevList, current: prevCurrent });
     }
@@ -103,15 +105,23 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
 
   renameCard: async (cardId, name) => {
     const prevCurrent = get().current;
+    const prevList = get().list;
 
-    if (prevCurrent?.card_id === cardId) {
-      set({ current: { ...prevCurrent, card_name: name } });
-    }
+    // Optimistic update
+    set({
+      current: prevCurrent?.card_id === cardId
+        ? { ...prevCurrent, card_name: name }
+        : prevCurrent,
+      list: prevList.map((c) =>
+        c.card_id === cardId ? { ...c, card_name: name } : c,
+      ),
+    });
 
     try {
       await apiUpdateCardName({ card_id: cardId, card_name: name });
+      invalidateMenuCache();
     } catch {
-      set({ current: prevCurrent });
+      set({ current: prevCurrent, list: prevList });
     }
   },
 

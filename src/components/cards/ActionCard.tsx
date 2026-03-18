@@ -6,18 +6,21 @@ interface ActionCardProps {
   image: string;
   label: ReactNode;
   to?: string;
+  onClick?: () => void;
 }
 
 const cardBg = 'radial-gradient(89.06% 172.06% at 60.96% -69.61%, #661AFF 0%, rgba(102, 26, 255, 0.00) 99.68%), #15111F';
 
-export function ActionCard({ icon, image, label, to }: ActionCardProps) {
+export function ActionCard({ icon, image, label, to, onClick }: ActionCardProps) {
   const navigate = useNavigate();
+
+  const handleClick = to ? () => navigate(to) : onClick;
 
   return (
     <div
       className="flex w-full relative overflow-hidden pt-12.5 p-3 rounded-[14px] cursor-pointer active:scale-[0.97] transition-transform duration-150"
       style={{ background: cardBg }}
-      onClick={to ? () => navigate(to) : undefined}
+      onClick={handleClick}
     >
       <img src={image} className="absolute right-0 h-full top-0 pointer-events-none" alt="" />
       <div className="absolute top-3 left-3 mix-blend-overlay">
