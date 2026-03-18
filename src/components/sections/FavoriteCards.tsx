@@ -1,9 +1,11 @@
+import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircleIcon } from '../icons/PlusCircleIcon';
 import { MiniCard } from '../cards/MiniCard';
 import { Skeleton } from '../ui/Skeleton';
 import { useMenuStore, useUiStore, selectMenuFavorites, selectBalanceVisible } from '../../store';
 import { formatBalance, getLastDigits, resolveCardVariant } from '../../lib/format';
+import type { FavoriteCardItem } from '../../services/api';
 import { ROUTES } from '../../lib/routes';
 
 interface FavoriteCardsProps {
@@ -14,6 +16,11 @@ export function FavoriteCards({ loading }: FavoriteCardsProps) {
   const navigate = useNavigate();
   const favorites = useMenuStore(selectMenuFavorites);
   const balanceVisible = useUiStore(selectBalanceVisible);
+
+  const handleNavigate = useCallback(
+    (cardId: number) => navigate(ROUTES.CARD(cardId)),
+    [navigate],
+  );
 
   if (!loading && favorites.length === 0) return null;
 
@@ -33,27 +40,46 @@ export function FavoriteCards({ loading }: FavoriteCardsProps) {
               <Skeleton className="h-22 min-w-36 rounded-xl" />
             </>
           ) : (
-            favorites.map((card) => {
-              const { whole, cents } = formatBalance(card.balance);
-              return (
-                <div
-                  key={card.card_id}
-                  onClick={() => navigate(ROUTES.CARD(card.card_id))}
-                  className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
-                >
-                  <MiniCard
-                    variant={resolveCardVariant(card.type)}
-                    lastDigits={getLastDigits(card.number)}
-                    balance={whole}
-                    balanceCents={cents}
-                    balanceHidden={!balanceVisible}
-                  />
-                </div>
-              );
-            })
+            favorites.map((card) => (
+              <FavoriteCardMini
+                key={card.card_id}
+                card={card}
+                balanceVisible={balanceVisible}
+                onNavigate={handleNavigate}
+              />
+            ))
           )}
         </div>
       </div>
     </div>
   );
 }
+
+interface FavoriteCardMiniProps {
+  card: FavoriteCardItem;
+  balanceVisible: boolean;
+  onNavigate: (cardId: number) => void;
+}
+
+const FavoriteCardMini = memo(function FavoriteCardMini({
+  card,
+  balanceVisible,
+  onNavigate,
+}: FavoriteCardMiniProps) {
+  const { whole, cents } = formatBalance(card.balance);
+
+  return (
+    <div
+      onClick={() => onNavigate(card.card_id)}
+      className="cursor-pointer active:scale-[0.97] transition-transform duration-150"
+    >
+      <MiniCard
+        variant={resolveCardVariant(card.type)}
+        lastDigits={getLastDigits(card.number)}
+        balance={whole}
+        balanceCents={cents}
+        balanceHidden={!balanceVisible}
+      />
+    </div>
+  );
+});

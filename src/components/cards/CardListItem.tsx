@@ -9,7 +9,7 @@ import { ROUTES } from '../../lib/routes';
 
 interface CardListItemProps {
   card: ListCardItem;
-  onToggleFavorite: (cardId: number) => void;
+  onToggleFavorite: (cardId: number, isFavorite: boolean) => void;
 }
 
 export const CardListItem = memo(function CardListItem({ card, onToggleFavorite }: CardListItemProps) {
@@ -24,8 +24,8 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
 
   const handleToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleFavorite(card.card_id);
-  }, [onToggleFavorite, card.card_id]);
+    onToggleFavorite(card.card_id, card.is_favorite);
+  }, [onToggleFavorite, card.card_id, card.is_favorite]);
 
   return (
     <div

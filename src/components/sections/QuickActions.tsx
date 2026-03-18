@@ -8,19 +8,13 @@ import { ReferralIcon } from '../icons/ReferralIcon';
 import { PuzzleIcon } from '../icons/PuzzleIcon';
 import { ROUTES } from '../../lib/routes';
 import { useMenuStore, selectSupportUrl } from '../../store';
-import { getWebApp } from '../../lib/telegram';
+import { openUrl } from '../../lib/openUrl';
 
 export function QuickActions() {
   const supportUrl = useMenuStore(selectSupportUrl);
 
   const handleSupport = () => {
-    if (!supportUrl) return;
-    const webApp = getWebApp();
-    if (webApp) {
-      webApp.openLink(supportUrl);
-    } else {
-      window.open(supportUrl, '_blank');
-    }
+    if (supportUrl) openUrl(supportUrl);
   };
 
   return (

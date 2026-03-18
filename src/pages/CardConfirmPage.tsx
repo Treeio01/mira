@@ -33,8 +33,9 @@ export function CardConfirmPage() {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
+    clearBuyError();
     if (cards.length === 0) fetchCards();
-  }, [cards.length, fetchCards]);
+  }, [cards.length, fetchCards, clearBuyError]);
 
   const card = useMemo(
     () => cards.find((c) => c.category_id === categoryId) ?? null,

@@ -1,6 +1,5 @@
-import { useMenuStore, useUiStore, selectCardsBalance, selectBalanceVisible } from '../../store';
-import { formatBalance } from '../../lib/format';
-import { Skeleton } from '../ui/Skeleton';
+import { useMenuStore, selectCardsBalance } from '../../store';
+import { BalanceDisplay } from '../ui/BalanceDisplay';
 
 interface CardBalanceProps {
   loading?: boolean;
@@ -8,8 +7,6 @@ interface CardBalanceProps {
 
 export function CardBalance({ loading }: CardBalanceProps) {
   const cardsBalance = useMenuStore(selectCardsBalance);
-  const visible = useUiStore(selectBalanceVisible);
-  const { whole, cents } = formatBalance(cardsBalance);
 
   return (
     <div
@@ -20,17 +17,7 @@ export function CardBalance({ loading }: CardBalanceProps) {
         <span className="text-sm text-white/64 tracking-[-0.02em]">
           Общий баланс карт
         </span>
-        {loading ? (
-          <Skeleton className="h-7 w-28" />
-        ) : visible ? (
-          <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
-            {whole}<span className="text-white/64">{cents}</span>
-          </span>
-        ) : (
-          <span className="font-semibold flex text-[26px] leading-[112%] tracking-[-0.01em] text-white">
-            ******
-          </span>
-        )}
+        <BalanceDisplay balance={cardsBalance} loading={loading} size="md" />
       </div>
     </div>
   );

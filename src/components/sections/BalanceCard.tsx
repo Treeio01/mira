@@ -1,6 +1,7 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { GradientHeader } from "../ui/GradientHeader";
-import { Skeleton } from "../ui/Skeleton";
+import { BalanceDisplay } from "../ui/BalanceDisplay";
 import { EyeIcon } from "../icons/EyeIcon";
 import { EyeHiddenIcon } from "../icons/EyeHiddenIcon";
 import { PlusIcon } from "../icons/PlusIcon";
@@ -11,7 +12,6 @@ import {
   selectMainBalance,
   selectBalanceVisible,
 } from "../../store";
-import { formatBalance } from "../../lib/format";
 import { ROUTES } from "../../lib/routes";
 
 interface BalanceCardProps {
@@ -36,7 +36,11 @@ export function BalanceCard({
   const toggleVisible = useUiStore((s) => s.toggleBalanceVisible);
   const mainBalance = useMenuStore(selectMainBalance);
   const displayBalance = balance ?? mainBalance;
-  const { whole, cents } = formatBalance(displayBalance);
+
+  const handleTopUp = useCallback(
+    () => navigate(topUpRoute ?? ROUTES.TOP_UP),
+    [navigate, topUpRoute],
+  );
 
   return (
     <GradientHeader className="flex-col gap-2.5">
@@ -46,19 +50,7 @@ export function BalanceCard({
             {title}
           </span>
           <div className="flex items-center gap-4">
-            {loading ? (
-              <Skeleton className="h-10 w-44" />
-            ) : (
-              <div className="relative">
-                <span className={`font-semibold flex text-[36px] leading-[112%] tracking-[-0.01em] text-white transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}>
-                  {whole}
-                  <span className="text-white/64">{cents}</span>
-                </span>
-                <span className={`font-semibold absolute inset-0 flex text-[36px] leading-[112%] tracking-[-0.01em] text-white transition-opacity duration-200 ${visible ? 'opacity-0' : 'opacity-100'}`}>
-                  **********
-                </span>
-              </div>
-            )}
+            <BalanceDisplay balance={displayBalance} loading={loading} size="lg" hiddenText="**********" />
             {!loading && (
               <button onClick={toggleVisible} aria-label={visible ? 'Скрыть баланс' : 'Показать баланс'}>
                 {visible ? <EyeIcon /> : <EyeHiddenIcon />}
@@ -77,7 +69,7 @@ export function BalanceCard({
       </div>
 
       <div className="flex w-full justify-between z-10 items-stretch">
-        <button onClick={() => navigate(topUpRoute ?? ROUTES.TOP_UP)} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
+        <button onClick={handleTopUp} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
           <PlusIcon />
           <span className="text-white font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
             {topUpLabel}

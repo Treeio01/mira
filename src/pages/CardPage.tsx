@@ -1,17 +1,14 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { BalanceCard } from '../components/sections/BalanceCard';
+import { CardNameEditor } from '../components/cards/CardNameEditor';
 import { InfoRow } from '../components/ui/InfoRow';
 import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
 import { PageLayout } from '../components/ui/PageLayout';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useModal } from '../components/ui/ModalProvider';
 import { WarningIcon } from '../components/icons/WarningIcon';
-import { EditIcon } from '../components/icons/EditIcon';
-import { CheckIcon } from '../components/icons/CheckIcon';
-import { CloseIcon } from '../components/icons/CloseIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
-import { useCardNameEdit } from '../hooks/useCardNameEdit';
 import { ROUTES } from '../lib/routes';
 
 export function CardPage() {
@@ -23,7 +20,6 @@ export function CardPage() {
   const clearCurrent = useCardsStore((s) => s.clearCurrent);
 
   const { showModal } = useModal();
-  const { isEditing, editName, setEditName, startEdit, saveName, cancelEdit } = useCardNameEdit(card);
 
   const parsedId = id ? Number(id) : NaN;
   const cardId = Number.isFinite(parsedId) ? parsedId : null;
@@ -82,42 +78,7 @@ export function CardPage() {
           ))
         ) : (
           <>
-            {isEditing ? (
-              <div className="flex w-full bg-[#181424] items-center justify-between rounded-lg gap-2.5 py-2 px-4">
-                <span className="text-[#A095BD] text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
-                  Имя карточки
-                </span>
-                <div className="flex gap-1.5 items-center">
-                  <input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    maxLength={64}
-                    autoFocus
-                    className="bg-transparent text-white text-sm font-medium text-right outline-none w-32"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveName();
-                      if (e.key === 'Escape') cancelEdit();
-                    }}
-                  />
-                  <button onClick={saveName} className="active:scale-90 transition-transform">
-                    <CheckIcon />
-                  </button>
-                  <button onClick={cancelEdit} className="active:scale-90 transition-transform">
-                    <CloseIcon />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <InfoRow
-                label="Имя карточки"
-                value={card.card_name}
-                action={
-                  <button onClick={startEdit} className="active:scale-90 transition-transform">
-                    <EditIcon />
-                  </button>
-                }
-              />
-            )}
+            <CardNameEditor card={card} />
             <InfoRow label="Номер" value={card.number} copyValue={card.number} />
             <InfoRow label="Месяц/год" value={card.date} copyValue={card.date} />
             <InfoRow label="CVC" value={card.cvc} copyValue={card.cvc} />

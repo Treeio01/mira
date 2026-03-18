@@ -28,10 +28,12 @@ export function EsimConfirmPage() {
   const buyError = useIssueStore(selectBuyError);
   const fetchEsims = useIssueStore((s) => s.fetchEsims);
   const buyEsim = useIssueStore((s) => s.buyEsim);
+  const clearBuyError = useIssueStore((s) => s.clearBuyError);
 
   useEffect(() => {
+    clearBuyError();
     if (esims.length === 0) fetchEsims();
-  }, [esims.length, fetchEsims]);
+  }, [esims.length, fetchEsims, clearBuyError]);
 
   const esim = useMemo(
     () => esims.find((e) => e.category_id === categoryId) ?? null,

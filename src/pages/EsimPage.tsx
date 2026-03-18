@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "../components/ui/PageHeader";
 import { PageLayout } from "../components/ui/PageLayout";
 import { ErrorMessage } from "../components/ui/ErrorMessage";
-import { Skeleton } from "../components/ui/Skeleton";
+import { IssueCategoryCard } from "../components/cards/IssueCategoryCard";
+import { IssueCategorySkeleton } from "../components/cards/IssueCategorySkeleton";
 import { useIssueStore, selectEsims, selectEsimsLoading, selectEsimsError } from "../store";
 import { ROUTES } from "../lib/routes";
 
@@ -18,6 +19,11 @@ export function EsimPage() {
     fetchEsims();
   }, [fetchEsims]);
 
+  const handleBuy = useCallback(
+    (categoryId: number) => navigate(ROUTES.ESIM_CONFIRM(categoryId)),
+    [navigate],
+  );
+
   return (
     <PageLayout>
       <PageHeader title={<>Покупка<br />ESIM</>} />
@@ -26,42 +32,19 @@ export function EsimPage() {
         <ErrorMessage message={error} onRetry={fetchEsims} />
       ) : (
         <div className="flex flex-col gap-3">
-          {isLoading
-            ? Array.from({ length: 1 }, (_, i) => (
-                <div key={i} className="flex flex-col gap-3 bg-[#181424] rounded-lg p-4">
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-10 w-full" />
-                  <Skeleton className="h-10 w-full rounded-lg" />
-                </div>
-              ))
-            : esims.map((esim) => (
-                <div
-                  key={esim.category_id}
-                  className="flex flex-col gap-3 bg-[#181424] rounded-lg p-4"
-                >
-                  <div className="flex justify-between items-center gap-4.5">
-                    <div className="flex flex-col gap-1.5 flex-1">
-                      <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
-                        {esim.text_name}
-                      </span>
-                      <span className="text-white/64 font-medium text-[12px] leading-[140%] tracking-[-0.02em]">
-                        {esim.description}
-                      </span>
-                    </div>
-                    <span className="text-white font-medium leading-[150%] tracking-[-0.01em] whitespace-nowrap">
-                      ${esim.price.toFixed(2)}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => navigate(ROUTES.ESIM_CONFIRM(esim.category_id))}
-                    className="flex w-full py-3 justify-center items-center rounded-lg bg-[#661AFF] active:scale-[0.97] transition-transform"
-                  >
-                    <span className="text-white font-medium text-sm leading-[140%] tracking-[-0.02em]">
-                      Купить
-                    </span>
-                  </button>
-                </div>
-              ))}
+          {isLoading ? (
+            <IssueCategorySkeleton count={1} />
+          ) : (
+            esims.map((esim) => (
+              <IssueCategoryCard
+                key={esim.category_id}
+                name={esim.text_name}
+                description={esim.description}
+                price={esim.price}
+                onBuy={() => handleBuy(esim.category_id)}
+              />
+            ))
+          )}
         </div>
       )}
     </PageLayout>

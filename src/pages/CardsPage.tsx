@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { GradientHeader } from '../components/ui/GradientHeader';
 import { SearchInput } from '../components/ui/SearchInput';
 import { CardListItem } from '../components/cards/CardListItem';
@@ -16,6 +16,11 @@ export function CardsPage() {
   const fetchCards = useCardsStore((s) => s.fetchCards);
   const toggleFavorite = useCardsStore((s) => s.toggleFavorite);
   const [search, setSearch] = useState('');
+
+  const handleToggleFavorite = useCallback(
+    (cardId: number, isFavorite: boolean) => toggleFavorite(cardId, !isFavorite),
+    [toggleFavorite],
+  );
 
   useEffect(() => {
     fetchCards();
@@ -63,7 +68,7 @@ export function CardsPage() {
             <CardListItem
               key={card.card_id}
               card={card}
-              onToggleFavorite={(id) => toggleFavorite(id, !card.is_favorite)}
+              onToggleFavorite={handleToggleFavorite}
             />
           ))}
           {filteredCards.length === 0 && (

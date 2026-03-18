@@ -1,112 +1,54 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { PageLayout } from "../components/ui/PageLayout";
 import { ConfirmFooter } from "../components/ui/ConfirmFooter";
 import { ErrorMessage } from "../components/ui/ErrorMessage";
 import { Skeleton } from "../components/ui/Skeleton";
 import { MethodList } from "../components/ui/MethodList";
-import {
-  useTopUpStore,
-  selectTopUpMethods,
-  selectUsdToRub,
-  selectMethodsLoading,
-  selectMethodsError,
-  selectFinalAmount,
-  selectFinalLoading,
-} from "../store";
-import { createTopUpBalance } from "../services/api";
-import { getWebApp } from "../lib/telegram";
-import { extractErrorMessage } from "../lib/error";
+import { AmountInput } from "../components/ui/AmountInput";
+import { useTopUpFlow } from "../hooks/useTopUpFlow";
+import { useSubmit } from "../hooks/useSubmit";
+import { getTopUpsMethods, getTopUpsFinalAmount, createTopUpBalance } from "../services/api";
+import { openUrl } from "../lib/openUrl";
+
+const fetchMethodsFn = async () => {
+  const data = await getTopUpsMethods();
+  return { methods: data.methods, usdToRub: data.usd_to_rub };
+};
+
+const fetchFinalFn = async (method: string, amount: number) => {
+  const data = await getTopUpsFinalAmount({ method_name: method, amount });
+  return { finalAmountText: data.final_amount_text };
+};
 
 export function TopUpPage() {
-  const [amount, setAmount] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const flow = useTopUpFlow({ fetchMethodsFn, fetchFinalFn });
 
-  const methods = useTopUpStore(selectTopUpMethods);
-  const usdToRub = useTopUpStore(selectUsdToRub);
-  const methodsLoading = useTopUpStore(selectMethodsLoading);
-  const methodsError = useTopUpStore(selectMethodsError);
-  const finalData = useTopUpStore(selectFinalAmount);
-  const finalLoading = useTopUpStore(selectFinalLoading);
-  const fetchMethods = useTopUpStore((s) => s.fetchMethods);
-  const fetchFinalAmount = useTopUpStore((s) => s.fetchFinalAmount);
-  const clearFinal = useTopUpStore((s) => s.clearFinal);
-
-  useEffect(() => {
-    fetchMethods();
-  }, [fetchMethods]);
-
-  const amountNum = amount ? parseFloat(amount) : 0;
-
-  const activeMethod = useMemo(
-    () => methods.find((m) => m.name === selectedMethod) ?? null,
-    [methods, selectedMethod],
+  const { submit, submitting, error: submitError } = useSubmit(
+    useCallback(async () => {
+      if (!flow.isValid || !flow.selectedMethod || !flow.finalText) return;
+      const { result } = await createTopUpBalance({
+        method_name: flow.selectedMethod,
+        amount: flow.amountNum,
+        final_amount: flow.amountNum, // server recalculates
+      });
+      if (result.payment_url) openUrl(result.payment_url);
+    }, [flow.isValid, flow.selectedMethod, flow.amountNum, flow.finalText]),
+    'Не удалось создать пополнение',
   );
 
-  const isBelowMin = activeMethod !== null && amountNum > 0 && amountNum < activeMethod.min_amount;
-  const isAboveMax = activeMethod !== null && amountNum > activeMethod.max_amount;
-  const isAmountInvalid = amountNum <= 0 || isBelowMin || isAboveMax;
-  const isValid = !isAmountInvalid && selectedMethod !== null;
-
-  useEffect(() => {
-    if (isValid && selectedMethod && amountNum > 0) {
-      fetchFinalAmount(selectedMethod, amountNum);
-    } else {
-      clearFinal();
-    }
-  }, [selectedMethod, amountNum, isValid, fetchFinalAmount, clearFinal]);
-
-  const displayTotal = finalData?.final_amount ?? amountNum;
-
-  const handleSubmit = useCallback(async () => {
-    if (!isValid || !selectedMethod || !finalData) return;
-    setSubmitting(true);
-    setSubmitError(null);
-
-    try {
-      const { result } = await createTopUpBalance({
-        method_name: selectedMethod,
-        amount: amountNum,
-        final_amount: finalData.final_amount,
-      });
-
-      if (result.payment_url) {
-        const webApp = getWebApp();
-        if (webApp) {
-          webApp.openLink(result.payment_url);
-        } else {
-          window.open(result.payment_url, '_blank');
-        }
-      }
-    } catch (e) {
-      setSubmitError(extractErrorMessage(e, 'Не удалось создать пополнение'));
-    } finally {
-      setSubmitting(false);
-    }
-  }, [isValid, selectedMethod, amountNum, finalData]);
-
-  if (methodsError) {
+  if (flow.methodsError) {
     return (
       <PageLayout centered>
-        <ErrorMessage message={methodsError} onRetry={fetchMethods} />
+        <ErrorMessage message={flow.methodsError} onRetry={flow.retryMethods} />
       </PageLayout>
     );
   }
 
-  if (methodsLoading) {
+  if (flow.methodsLoading) {
     return (
       <PageLayout>
-        <PageHeader
-          title={
-            <>
-              Пополнение
-              <br />
-              баланса
-            </>
-          }
-        />
+        <TopUpHeader title="баланса" />
         <div className="flex flex-col gap-3">
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-5 w-40" />
@@ -118,62 +60,58 @@ export function TopUpPage() {
     );
   }
 
+  const limitHint = flow.activeMethod
+    ? `От $${flow.activeMethod.min_amount} до $${flow.activeMethod.max_amount}`
+    : "Выберите метод оплаты";
+
   return (
     <PageLayout>
-      <PageHeader
-        title={
-          <>
-            Пополнение
-            <br />
-            баланса
-          </>
-        }
-      />
+      <TopUpHeader title="баланса" />
 
       <div className="flex flex-col w-full gap-3">
-        <div className="flex flex-col gap-1.5">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Введите сумму пополнения в $"
-            className={`w-full bg-[#181424] rounded-lg py-3 px-4 font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBelowMin || isAboveMax ? "text-[#FF5C5C]" : "text-white"}`}
-          />
-          <div className="flex justify-between px-1">
-            <span className={`font-medium text-[14px] leading-[140%] tracking-[-0.02em] ${isBelowMin || isAboveMax ? "text-[#FF5C5C]" : "text-white/20"}`}>
-              {activeMethod
-                ? `От $${activeMethod.min_amount} до $${activeMethod.max_amount}`
-                : "Выберите метод оплаты"}
-            </span>
-            {usdToRub && (
-              <span className="text-white/20 font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
-                Курс: 1 $ ≈ {usdToRub} ₽
-              </span>
-            )}
-          </div>
-        </div>
+        <AmountInput
+          value={flow.amount}
+          onChange={flow.setAmount}
+          hasError={flow.isBelowMin || flow.isAboveMax}
+          hint={limitHint}
+          rightHint={flow.usdToRub ? `Курс: 1 $ ≈ ${flow.usdToRub} ₽` : undefined}
+        />
 
         <h2 className="text-white font-medium text-[20px] leading-[160%] tracking-[-0.02em]">
           Способ оплаты
         </h2>
 
         <MethodList
-          methods={methods}
-          selectedMethod={selectedMethod}
-          onSelect={setSelectedMethod}
+          methods={flow.methods}
+          selectedMethod={flow.selectedMethod}
+          onSelect={flow.setSelectedMethod}
         />
       </div>
 
       <ConfirmFooter
-        total={displayTotal}
-        totalText={finalData?.final_amount_text}
+        total={flow.amountNum}
+        totalText={flow.finalText ?? undefined}
         buying={submitting}
         buyError={submitError}
-        disabled={!isValid || finalLoading}
-        onConfirm={handleSubmit}
-        buttonText={finalLoading ? "Расчёт..." : "Перейти к оплате"}
+        disabled={!flow.isValid || flow.finalLoading}
+        onConfirm={submit}
+        buttonText={flow.finalLoading ? "Расчёт..." : "Перейти к оплате"}
         wrapped={false}
       />
     </PageLayout>
+  );
+}
+
+function TopUpHeader({ title }: { title: string }) {
+  return (
+    <PageHeader
+      title={
+        <>
+          Пополнение
+          <br />
+          {title}
+        </>
+      }
+    />
   );
 }
