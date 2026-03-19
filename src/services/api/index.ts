@@ -5,6 +5,6 @@ export { getAvailableCards, confirmBuyCard, getAvailableEsim, confirmBuyEsim } f
 export { getRefInfo } from './referral';
 export { getTopUpsMethods, getTopUpsFinalAmount, createTopUpBalance, getTopUpsMethodsCard, getTopUpsFinalAmountCard, createTopUpCard } from './topup';
 export { tokenStorage } from './token';
-export { apiRequest } from './client';
+export { apiRequest, apiRequestValidated } from './client';
 export { ApiError } from './types';
 export type * from './types';

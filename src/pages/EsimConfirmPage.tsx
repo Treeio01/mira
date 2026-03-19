@@ -15,7 +15,7 @@ import {
   selectBuyError,
 } from "../store";
 
-export function EsimConfirmPage() {
+export default function EsimConfirmPage() {
   const { type } = useParams();
   const navigate = useNavigate();
   const parsed = type ? Number(type) : NaN;
@@ -66,7 +66,7 @@ export function EsimConfirmPage() {
             </>
           }
         />
-        <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+        <div className="flex flex-col gap-2.5 bg-surface-alt rounded-[8px] p-4">
           <Skeleton className="h-4 w-40" />
           <Skeleton className="h-20 w-full" />
         </div>
@@ -86,7 +86,7 @@ export function EsimConfirmPage() {
         }
       />
 
-      <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+      <div className="flex flex-col gap-2.5 bg-surface-alt rounded-[8px] p-4">
         <div className="flex flex-col gap-1.5 w-full">
           <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
             {esim.text_name}

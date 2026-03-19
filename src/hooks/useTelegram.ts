@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getWebApp, parseInitData, getStartParam, getLaunchParams, isTelegramWebApp } from '../lib/telegram';
 import type { TelegramInitData, ThemeParams, WebApp } from '../types/telegram';
 
@@ -21,19 +21,15 @@ interface UseTelegramReturn {
 }
 
 export function useTelegram(): UseTelegramReturn {
-  const [isReady, setIsReady] = useState(false);
   const webApp = useMemo(() => getWebApp(), []);
 
-  useEffect(() => {
+  const [isReady] = useState(() => {
     if (webApp) {
       webApp.ready();
       webApp.expand();
-      setIsReady(true);
-    } else {
-      // Не в TG — всё равно готовы
-      setIsReady(true);
     }
-  }, [webApp]);
+    return true;
+  });
 
   const initDataRaw = webApp?.initData ?? '';
   const initData = useMemo(() => parseInitData(initDataRaw), [initDataRaw]);

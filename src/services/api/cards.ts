@@ -1,4 +1,5 @@
-import { apiRequest } from './client';
+import { apiRequest, apiRequestValidated } from './client';
+import { ListCardsResponseSchema, CardInfoResponseSchema } from './schemas';
 import type {
   CardInfoPayload,
   ListCardsResponse,
@@ -10,11 +11,11 @@ import type {
 } from './types';
 
 export async function getCards(): Promise<ListCardsResponse> {
-  return apiRequest<ListCardsResponse>('/api/v1/list_cards');
+  return apiRequestValidated(ListCardsResponseSchema, '/api/v1/list_cards');
 }
 
 export async function getCardInfo(payload: CardInfoPayload, signal?: AbortSignal): Promise<CardInfoResponse> {
-  return apiRequest<CardInfoResponse>('/api/v1/card_info', {
+  return apiRequestValidated(CardInfoResponseSchema, '/api/v1/card_info', {
     body: payload,
     signal,
   });

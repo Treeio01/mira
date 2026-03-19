@@ -14,6 +14,8 @@ export function PageTransition() {
     if (location.pathname === current.key) return;
 
     pending.current = { key: location.pathname, node: outlet };
+    // Phase transition driven by route change — intentional sync setState
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPhase('exiting');
     setFixedPhase('exiting');
   }, [location.pathname, outlet, current.key, setFixedPhase]);

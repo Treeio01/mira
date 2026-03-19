@@ -9,7 +9,7 @@ import { UserIdBadge } from '../components/ui/UserIdBadge';
 import { useCardsStore, selectCards, selectCardsLoading, selectCardsError } from '../store';
 import { getLastDigits } from '../lib/format';
 
-export function CardsPage() {
+export default function CardsPage() {
   const cards = useCardsStore(selectCards);
   const isLoading = useCardsStore(selectCardsLoading);
   const error = useCardsStore(selectCardsError);

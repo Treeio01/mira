@@ -8,7 +8,7 @@ interface SearchInputProps {
 
 export function SearchInput({ value, onChange, placeholder = 'Поиск' }: SearchInputProps) {
   return (
-    <div className="flex w-full gap-2.5 items-center rounded-lg bg-[#181424] px-4 py-3">
+    <div className="flex w-full gap-2.5 items-center rounded-lg bg-surface-alt px-4 py-3">
       <SearchIcon className="shrink-0" />
       <input
         type="search"

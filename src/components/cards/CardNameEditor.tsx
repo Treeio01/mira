@@ -14,8 +14,8 @@ export function CardNameEditor({ card }: CardNameEditorProps) {
 
   if (isEditing) {
     return (
-      <div className="flex w-full bg-[#181424] items-center justify-between rounded-lg gap-2.5 py-2 px-4">
-        <span className="text-[#A095BD] text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
+      <div className="flex w-full bg-surface-alt items-center justify-between rounded-lg gap-2.5 py-2 px-4">
+        <span className="text-text-hint text-sm font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
           Имя карточки
         </span>
         <div className="flex gap-1.5 items-center">

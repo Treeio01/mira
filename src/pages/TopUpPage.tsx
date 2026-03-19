@@ -21,7 +21,7 @@ const fetchFinalFn = async (method: string, amount: number) => {
   return { finalAmountText: data.final_amount_text };
 };
 
-export function TopUpPage() {
+export default function TopUpPage() {
   const flow = useTopUpFlow({ fetchMethodsFn, fetchFinalFn });
 
   const { submit, submitting, error: submitError } = useSubmit(

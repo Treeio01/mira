@@ -4,6 +4,25 @@
   --font-Inter: "Inter", sans-serif;
   --font-Inria: "Inria Serif", sans-serif;
   --font-SF: "SF Pro", sans-serif;
+
+  --color-primary: #661AFF;
+  --color-primary-hover: #7B3AFF;
+
+  --color-surface: #15111F;
+  --color-surface-alt: #181424;
+  --color-surface-border: #1C1828;
+
+  --color-danger: #FF3B30;
+  --color-danger-text: #FF6961;
+  --color-danger-bg: #2A1520;
+  --color-danger-light: #FF5C5C;
+
+  --color-success: #00FF44;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.64);
+  --color-text-muted: rgba(255, 255, 255, 0.50);
+  --color-text-hint: #A095BD;
 }
 
 html, body, #root {
@@ -33,7 +52,7 @@ a {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(102, 26, 255, 0.4) transparent;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 40%, transparent) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -46,16 +65,16 @@ a {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(102, 26, 255, 0.4);
+  background: color-mix(in srgb, var(--color-primary) 40%, transparent);
   border-radius: 9999px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 26, 255, 0.7);
+  background: color-mix(in srgb, var(--color-primary) 70%, transparent);
 }
 
 *::-webkit-scrollbar-thumb:active {
-  background: rgba(102, 26, 255, 0.9);
+  background: color-mix(in srgb, var(--color-primary) 90%, transparent);
 }
 
 @keyframes shimmer {

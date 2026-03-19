@@ -8,7 +8,7 @@ import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { useMenuStore, selectMenuLoading, selectMenuError } from '../store';
 import { ROUTES } from '../lib/routes';
 
-export function HomePage() {
+export default function HomePage() {
   const fetchMenu = useMenuStore((s) => s.fetchMenu);
   const navigate = useNavigate();
   const isLoading = useMenuStore(selectMenuLoading);
@@ -31,7 +31,7 @@ export function HomePage() {
       <div className="flex flex-col w-full gap-2.5">
         <BalanceCard loading={isLoading} />
         <CardBalance loading={isLoading} />
-        <button onClick={() => navigate(ROUTES.CARDS_CREATE)} className="p-3 bg-[#661AFF] rounded-lg flex justify-center items-center">
+        <button onClick={() => navigate(ROUTES.CARDS_CREATE)} className="p-3 bg-primary rounded-lg flex justify-center items-center">
           <span className="font-medium text-white leading-[140%] tracking-[-0.02em]">
             Выпустить карту
           </span>

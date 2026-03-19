@@ -32,7 +32,7 @@ export function ConfirmFooter({ total, totalText, buying, buyError, disabled, on
       <button
         onClick={onConfirm}
         disabled={buying || disabled}
-        className="flex w-full py-3 justify-center items-center rounded-lg bg-[#661AFF] active:scale-[0.97] transition-transform disabled:opacity-50"
+        className="flex w-full py-3 justify-center items-center rounded-lg bg-primary active:scale-[0.97] transition-transform disabled:opacity-50"
       >
         <span className="text-white font-medium text-sm leading-[140%] tracking-[-0.02em]">
           {buying ? 'Обработка...' : buttonText}
@@ -44,7 +44,7 @@ export function ConfirmFooter({ total, totalText, buying, buyError, disabled, on
   if (!wrapped) return <div className="flex flex-col gap-4 mt-auto">{content}</div>;
 
   return (
-    <div className="flex flex-col gap-4 items-center bg-[#181424] rounded-lg p-4">
+    <div className="flex flex-col gap-4 items-center bg-surface-alt rounded-lg p-4">
       {content}
     </div>
   );

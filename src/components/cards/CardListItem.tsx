@@ -29,7 +29,7 @@ export const CardListItem = memo(function CardListItem({ card, onToggleFavorite 
 
   return (
     <div
-      className="flex p-1.5 w-full items-start justify-between bg-[#15111F] rounded-2xl border border-[#2A223E] cursor-pointer active:scale-[0.97] transition-transform duration-150"
+      className="flex p-1.5 w-full items-start justify-between bg-surface rounded-2xl border border-[#2A223E] cursor-pointer active:scale-[0.97] transition-transform duration-150"
       onClick={handleClick}
     >
       <div className="flex gap-3 items-center min-w-0 flex-1">

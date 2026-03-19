@@ -26,7 +26,7 @@ export const WarningIcon = memo(function WarningIcon() {
           <feBlend in2="shape" result="fx" />
         </filter>
         <linearGradient id="wi_grad" x1="27.5" y1="0" x2="27.5" y2="55" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#661AFF" />
+          <stop stopColor="var(--color-primary)" />
           <stop offset="1" stopColor="#3D1099" />
         </linearGradient>
       </defs>

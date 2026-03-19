@@ -60,7 +60,7 @@ export function BalanceCard({
         </div>
         {status && (
           <div className="flex p-1 gap-1 items-center backdrop-blur-[10px] bg-black/24 rounded-[8px]">
-            <div className={`flex rounded-full w-[7px] h-[7px] ${status === 'active' ? 'bg-[#00FF44]' : 'bg-[#FF3B30]'}`} />
+            <div className={`flex rounded-full w-[7px] h-[7px] ${status === 'active' ? 'bg-success' : 'bg-danger'}`} />
             <span className="text-[12px] font-medium text-white leading-[140%] tracking-[-0.02em]">
               {status === 'active' ? 'Активная' : 'Неактивная'}
             </span>
@@ -69,7 +69,7 @@ export function BalanceCard({
       </div>
 
       <div className="flex w-full justify-between z-10 items-stretch">
-        <button onClick={handleTopUp} className="flex px-4 py-3 gap-2.5 items-center bg-[#661AFF] rounded-lg w-max">
+        <button onClick={handleTopUp} className="flex px-4 py-3 gap-2.5 items-center bg-primary rounded-lg w-max">
           <PlusIcon />
           <span className="text-white font-medium leading-[140%] tracking-[-0.02em] whitespace-nowrap">
             {topUpLabel}

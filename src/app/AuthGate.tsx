@@ -16,8 +16,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (!isInitialized || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-[#661AFF] rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4" role="status" aria-label="Загрузка">
+          <div className="w-8 h-8 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
           <span className="text-white/50 text-sm">Загрузка...</span>
         </div>
       </div>
@@ -27,9 +27,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
   // Ошибка авторизации
   if (!isAuthed || error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black px-6">
+      <div className="flex items-center justify-center min-h-screen bg-black px-6" role="alert">
         <div className="flex flex-col items-center gap-4 text-center max-w-xs">
-          <div className="w-14 h-14 rounded-full bg-[#661AFF] flex items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
             <span className="text-2xl text-white">⚠</span>
           </div>
           <span className="text-white font-semibold text-lg">
@@ -40,7 +40,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
           </span>
           <button
             onClick={() => register()}
-            className="mt-2 px-6 py-3 bg-[#661AFF] rounded-lg text-white font-medium text-sm active:scale-[0.97] transition-transform"
+            className="mt-2 px-6 py-3 bg-primary rounded-lg text-white font-medium text-sm active:scale-[0.97] transition-transform"
           >
             Попробовать снова
           </button>

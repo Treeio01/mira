@@ -10,7 +10,7 @@ export function BottomBar({ children }: BottomBarProps) {
     <Fixed>
       <div
         data-fixed
-        className="fixed z-50 justify-center rounded-[56px] bg-[#15111F] p-1.5 gap-1.5 bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-32px)] flex"
+        className="fixed z-50 justify-center rounded-[56px] bg-surface p-1.5 gap-1.5 bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-32px)] flex"
       >
         {children}
       </div>

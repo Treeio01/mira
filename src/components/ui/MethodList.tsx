@@ -18,7 +18,7 @@ export function MethodList({ methods, selectedMethod, onSelect }: MethodListProp
             className={`flex items-center w-full py-3 px-5 rounded-lg transition-colors ${
               isSelected
                 ? "bg-[#211B30] border border-[#423660]"
-                : "bg-[#181424] border border-transparent"
+                : "bg-surface-alt border border-transparent"
             }`}
           >
             {method.icon && (

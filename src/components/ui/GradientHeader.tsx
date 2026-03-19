@@ -4,7 +4,7 @@ import mainBlockLine from '../../assets/img/main-block--line.png';
 interface GradientHeaderProps {
   children: ReactNode;
   className?: string;
-  isCustomBg?: Boolean;
+  isCustomBg?: boolean;
 }
 
 const headerGradient = 'linear-gradient(to top right, #4A14B5 0%, #4A14B5 25%, #6B33DC 60%, #9B6EF0 80%, #D4C4FA 95%, #F0EAFF 100%)';

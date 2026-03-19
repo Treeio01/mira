@@ -34,7 +34,7 @@ export function BottomNav() {
         width: indicator.width,
         height: 'calc(100% - 12px)',
         borderRadius: 9999,
-        backgroundColor: '#661AFF',
+        backgroundColor: 'var(--color-primary)',
         transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         zIndex: 0,
       }
@@ -45,9 +45,10 @@ export function BottomNav() {
   return (
     <>
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full min-h-40.5 bg-linear-to-b from-black/0 to-black pointer-events-none" />
-      <div
+      <nav
         ref={containerRef}
-        className="fixed rounded-[56px] bg-[#15111F] p-1.5 gap-1.5 bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-32px)] flex"
+        aria-label="Навигация"
+        className="fixed rounded-[56px] bg-surface p-1.5 gap-1.5 bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-32px)] flex"
       >
         <div style={indicatorStyle} />
         {tabs.map((tab) => {
@@ -57,6 +58,8 @@ export function BottomNav() {
               key={tab.path}
               data-tab
               onClick={() => navigate(tab.path)}
+              aria-label={tab.label}
+              aria-current={isActive ? 'page' : undefined}
               className="flex w-full p-3 justify-center gap-1.5 items-center rounded-full relative z-10"
             >
               <tab.Icon className={isActive ? 'text-white' : 'text-white/64'} />
@@ -70,7 +73,7 @@ export function BottomNav() {
             </button>
           );
         })}
-      </div>
+      </nav>
     </>
   );
 }

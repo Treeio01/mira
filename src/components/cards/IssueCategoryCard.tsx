@@ -14,7 +14,7 @@ export const IssueCategoryCard = memo(function IssueCategoryCard({
   onBuy,
 }: IssueCategoryCardProps) {
   return (
-    <div className="flex flex-col gap-3 bg-[#181424] rounded-lg p-4">
+    <div className="flex flex-col gap-3 bg-surface-alt rounded-lg p-4">
       <div className="flex justify-between items-center gap-4.5">
         <div className="flex flex-col gap-1.5 flex-1">
           <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
@@ -30,7 +30,7 @@ export const IssueCategoryCard = memo(function IssueCategoryCard({
       </div>
       <button
         onClick={onBuy}
-        className="flex w-full py-3 justify-center items-center rounded-lg bg-[#661AFF] active:scale-[0.97] transition-transform"
+        className="flex w-full py-3 justify-center items-center rounded-lg bg-primary active:scale-[0.97] transition-transform"
       >
         <span className="text-white font-medium text-sm leading-[140%] tracking-[-0.02em]">
           Купить

@@ -27,6 +27,8 @@ export const Modal = memo(function Modal({
 
   useEffect(() => {
     if (open && phase === 'closed') {
+      // Animation phase transitions — intentional sync setState
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhase('entering');
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setPhase('visible'));
@@ -117,7 +119,7 @@ export const Modal = memo(function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="flex bg-[#15111F] rounded-xl border border-[#1C1828] w-full max-w-[362px] p-5 flex-col items-center gap-4"
+        className="flex bg-surface rounded-xl border border-surface-border w-full max-w-[362px] p-5 flex-col items-center gap-4"
         style={{
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(12px)',
@@ -143,7 +145,7 @@ export const Modal = memo(function Modal({
 
         <button
           onClick={handleButtonClick}
-          className="p-3 w-full rounded-lg items-center justify-center bg-[#661AFF] active:scale-[0.97] transition-transform duration-150"
+          className="p-3 w-full rounded-lg items-center justify-center bg-primary active:scale-[0.97] transition-transform duration-150"
         >
           <span className="text-white font-medium leading-[140%] tracking-[-0.02em]">
             {buttonText}

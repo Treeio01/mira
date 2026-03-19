@@ -8,7 +8,7 @@ import { IssueCategorySkeleton } from '../components/cards/IssueCategorySkeleton
 import { useIssueStore, selectIssueCards, selectIssueCardsLoading, selectIssueCardsError } from '../store';
 import { ROUTES } from '../lib/routes';
 
-export function CardCreatePage() {
+export default function CardCreatePage() {
   const navigate = useNavigate();
   const cards = useIssueStore(selectIssueCards);
   const isLoading = useIssueStore(selectIssueCardsLoading);

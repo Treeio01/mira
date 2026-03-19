@@ -11,7 +11,7 @@ import { WarningIcon } from '../components/icons/WarningIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 import { ROUTES } from '../lib/routes';
 
-export function CardPage() {
+export default function CardPage() {
   const { id } = useParams();
   const card = useCardsStore(selectCurrentCard);
   const isLoading = useCardsStore(selectCurrentCardLoading);

@@ -29,7 +29,7 @@ export function CopyButton({ text }: CopyButtonProps) {
     >
       {copied ? (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 10.5L8 14.5L16 6.5" stroke="#661AFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M4 10.5L8 14.5L16 6.5" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ) : (
         <CopyIcon />

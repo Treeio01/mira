@@ -10,7 +10,7 @@ interface ActionCardProps {
   onClick?: () => void;
 }
 
-const cardBg = 'radial-gradient(89.06% 172.06% at 60.96% -69.61%, #661AFF 0%, rgba(102, 26, 255, 0.00) 99.68%), #15111F';
+const cardBg = 'radial-gradient(89.06% 172.06% at 60.96% -69.61%, var(--color-primary) 0%, rgba(102, 26, 255, 0.00) 99.68%), var(--color-surface)';
 const cardClassName = 'flex w-full relative overflow-hidden pt-12.5 p-3 rounded-[14px] cursor-pointer active:scale-[0.97] transition-transform duration-150 no-underline';
 
 export function ActionCard({ icon, image, label, to, href, onClick }: ActionCardProps) {

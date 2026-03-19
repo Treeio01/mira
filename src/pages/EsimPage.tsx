@@ -8,7 +8,7 @@ import { IssueCategorySkeleton } from "../components/cards/IssueCategorySkeleton
 import { useIssueStore, selectEsims, selectEsimsLoading, selectEsimsError } from "../store";
 import { ROUTES } from "../lib/routes";
 
-export function EsimPage() {
+export default function EsimPage() {
   const navigate = useNavigate();
   const esims = useIssueStore(selectEsims);
   const isLoading = useIssueStore(selectEsimsLoading);

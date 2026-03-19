@@ -33,7 +33,7 @@ export class ErrorBoundary extends Component<Props, State> {
           </span>
           <button
             onClick={this.handleReset}
-            className="px-6 py-3 bg-[#661AFF] rounded-lg text-white font-medium text-sm active:scale-[0.97] transition-transform"
+            className="px-6 py-3 bg-primary rounded-lg text-white font-medium text-sm active:scale-[0.97] transition-transform"
           >
             Попробовать снова
           </button>

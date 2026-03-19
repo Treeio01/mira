@@ -1,31 +1,42 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from './AppLayout';
-import { HomePage } from '../pages/HomePage';
-import { CardsPage } from '../pages/CardsPage';
-import { RefferPage } from '../pages/RefferPage';
-import { CardPage } from '../pages/CardPage';
-import { CardCreatePage } from '../pages/CardCreatePage';
-import { CardConfirmPage } from '../pages/CardConfirmPage';
-import { EsimPage } from '../pages/EsimPage';
-import { EsimConfirmPage } from '../pages/EsimConfirmPage';
-import { TopUpPage } from '../pages/TopUpPage';
-import { CardTopUpPage } from '../pages/CardTopUpPage';
 import { ROUTES } from '../lib/routes';
+import { RouteErrorBoundary } from '../components/RouteErrorBoundary';
+
+const HomePage = lazy(() => import('../pages/HomePage'));
+const CardsPage = lazy(() => import('../pages/CardsPage'));
+const CardPage = lazy(() => import('../pages/CardPage'));
+const CardCreatePage = lazy(() => import('../pages/CardCreatePage'));
+const CardConfirmPage = lazy(() => import('../pages/CardConfirmPage'));
+const CardTopUpPage = lazy(() => import('../pages/CardTopUpPage'));
+const EsimPage = lazy(() => import('../pages/EsimPage'));
+const EsimConfirmPage = lazy(() => import('../pages/EsimConfirmPage'));
+const ReferralPage = lazy(() => import('../pages/ReferralPage'));
+const TopUpPage = lazy(() => import('../pages/TopUpPage'));
+
+function page(Component: React.LazyExoticComponent<() => React.JSX.Element>) {
+  return (
+    <Suspense fallback={null}>
+      <Component />
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      { path: ROUTES.HOME, element: <HomePage /> },
-      { path: ROUTES.CARDS, element: <CardsPage /> },
-      { path: ROUTES.CARDS_CREATE, element: <CardCreatePage /> },
-      { path: `${ROUTES.CARDS_CREATE}/:type`, element: <CardConfirmPage /> },
-      { path: `${ROUTES.CARDS}/:id`, element: <CardPage /> },
-      { path: `${ROUTES.CARDS}/:id/top-up`, element: <CardTopUpPage /> },
-      { path: ROUTES.ESIM, element: <EsimPage /> },
-      { path: `${ROUTES.ESIM}/:type`, element: <EsimConfirmPage /> },
-      { path: ROUTES.REFERRAL, element: <RefferPage /> },
-      { path: ROUTES.TOP_UP, element: <TopUpPage /> },
+      { path: ROUTES.HOME, element: page(HomePage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.CARDS, element: page(CardsPage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.CARDS_CREATE, element: page(CardCreatePage), errorElement: <RouteErrorBoundary /> },
+      { path: `${ROUTES.CARDS_CREATE}/:type`, element: page(CardConfirmPage), errorElement: <RouteErrorBoundary /> },
+      { path: `${ROUTES.CARDS}/:id`, element: page(CardPage), errorElement: <RouteErrorBoundary /> },
+      { path: `${ROUTES.CARDS}/:id/top-up`, element: page(CardTopUpPage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.ESIM, element: page(EsimPage), errorElement: <RouteErrorBoundary /> },
+      { path: `${ROUTES.ESIM}/:type`, element: page(EsimConfirmPage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.REFERRAL, element: page(ReferralPage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.TOP_UP, element: page(TopUpPage), errorElement: <RouteErrorBoundary /> },
     ],
   },
 ]);

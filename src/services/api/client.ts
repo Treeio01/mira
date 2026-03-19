@@ -1,8 +1,12 @@
+import type { ZodType } from 'zod';
+
 import { ApiError } from './types';
 import type { ApiErrorResponse, RefreshTokenResponse } from './types';
 import { tokenStorage } from './token';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.miracards.net';
+import { env } from '../../lib/env';
+
+const BASE_URL = env.API_BASE_URL;
 const REQUEST_TIMEOUT = 15_000;
 
 let refreshPromise: Promise<RefreshTokenResponse> | null = null;
@@ -139,4 +143,18 @@ export async function apiRequest<T>(
   }
 
   return res.json() as Promise<T>;
+}
+
+export async function apiRequestValidated<T>(
+  schema: ZodType<T>,
+  endpoint: string,
+  options: {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    body?: unknown;
+    skipAuth?: boolean;
+    signal?: AbortSignal;
+  } = {},
+): Promise<T> {
+  const raw = await apiRequest<unknown>(endpoint, options);
+  return schema.parse(raw);
 }

@@ -5,12 +5,12 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div role="alert" aria-live="polite" className="flex flex-col items-center gap-3">
       <span className="text-white/50 text-sm text-center">{message}</span>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-4 py-2 bg-[#661AFF] rounded-lg text-white text-sm font-medium active:scale-[0.97] transition-transform"
+          className="px-4 py-2 bg-primary rounded-lg text-white text-sm font-medium active:scale-[0.97] transition-transform"
         >
           Повторить
         </button>

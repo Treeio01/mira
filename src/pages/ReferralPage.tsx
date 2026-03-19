@@ -10,7 +10,7 @@ import { useReferralStore, selectRefData, selectRefLoading, selectRefError } fro
 import blurImage from '../assets/img/reffer-header-blur-img.png';
 import noBlurImage from '../assets/img/reffer-header-img.png';
 
-export function RefferPage() {
+export default function ReferralPage() {
   const data = useReferralStore(selectRefData);
   const isLoading = useReferralStore(selectRefLoading);
   const error = useReferralStore(selectRefError);
@@ -48,8 +48,8 @@ export function RefferPage() {
         {showSkeleton ? (
           <InfoRowSkeleton />
         ) : (
-          <div className="flex w-full bg-[#181424] items-center rounded-lg gap-2.5 py-3 px-4">
-            <span className="text-[#A095BD] min-w-0 truncate text-sm font-medium leading-[140%] tracking-[-0.02em]">
+          <div className="flex w-full bg-surface-alt items-center rounded-lg gap-2.5 py-3 px-4">
+            <span className="text-text-hint min-w-0 truncate text-sm font-medium leading-[140%] tracking-[-0.02em]">
               {data.referral_link}
             </span>
             <CopyButton text={data.referral_link} />

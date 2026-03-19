@@ -1,4 +1,5 @@
-import { apiRequest } from './client';
+import { apiRequestValidated } from './client';
+import { RegisterResponseSchema } from './schemas';
 import { tokenStorage } from './token';
 import type { RegisterResponse } from './types';
 import { getWebApp } from '../../lib/telegram';
@@ -11,7 +12,7 @@ export async function register(): Promise<RegisterResponse> {
     throw new Error('Telegram WebApp недоступен');
   }
 
-  const data = await apiRequest<RegisterResponse>('/api/v1/register', {
+  const data = await apiRequestValidated(RegisterResponseSchema, '/api/v1/register', {
     body: { init_data: initData },
     skipAuth: true,
   });

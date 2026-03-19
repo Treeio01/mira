@@ -20,7 +20,7 @@ import { openUrl } from "../lib/openUrl";
 import { invalidateMenuCache } from "../store/menu";
 import { ROUTES } from "../lib/routes";
 
-export function CardTopUpPage() {
+export default function CardTopUpPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const cardId = id ? Number(id) : NaN;

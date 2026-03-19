@@ -15,7 +15,7 @@ import {
   selectBuyError,
 } from "../store";
 
-export function CardConfirmPage() {
+export default function CardConfirmPage() {
   const { type } = useParams();
   const navigate = useNavigate();
   const parsed = type ? Number(type) : NaN;
@@ -68,7 +68,7 @@ export function CardConfirmPage() {
             </>
           }
         />
-        <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+        <div className="flex flex-col gap-2.5 bg-surface-alt rounded-[8px] p-4">
           <Skeleton className="h-4 w-40" />
           <Skeleton className="h-20 w-full" />
           <Skeleton className="h-16 w-full" />
@@ -95,7 +95,7 @@ export function CardConfirmPage() {
         }
       />
 
-      <div className="flex flex-col gap-2.5 bg-[#181424] rounded-[8px] p-4">
+      <div className="flex flex-col gap-2.5 bg-surface-alt rounded-[8px] p-4">
         <div className="flex flex-col gap-1.5 w-full">
           <span className="text-white font-medium text-[14px] leading-[140%] tracking-[-0.02em]">
             {card.text_name}
@@ -149,9 +149,9 @@ export function CardConfirmPage() {
               clearBuyError();
             }}
             placeholder="Введите сумму пополнения"
-            className={`w-full bg-[#221C33] rounded-lg p-4 font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBelowMin ? "text-[#FF5C5C]" : "text-white"}`}
+            className={`w-full bg-[#221C33] rounded-lg p-4 font-medium text-[14px] leading-[140%] tracking-[-0.02em] outline-none placeholder:text-white/40 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isBelowMin ? "text-danger-light" : "text-white"}`}
           />
-          <span className={`text-center font-medium text-[14px] leading-[140%] tracking-[-0.02em] ${isBelowMin ? "text-[#FF5C5C]" : "text-white/40"}`}>
+          <span className={`text-center font-medium text-[14px] leading-[140%] tracking-[-0.02em] ${isBelowMin ? "text-danger-light" : "text-white/40"}`}>
             Минимальная сумма пополнения для <br /> активации карты -{" "}
             ${card.min_top_up.toFixed(2)}
           </span>
