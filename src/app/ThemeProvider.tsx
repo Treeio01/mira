@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { useTelegramContext } from './TelegramProvider';
+import { useTelegramContext } from './TelegramContext';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { colorScheme, themeParams } = useTelegramContext();

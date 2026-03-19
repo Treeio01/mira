@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader } from "../components/ui/PageHeader";
 import { PageLayout } from "../components/ui/PageLayout";
@@ -26,13 +26,11 @@ export function CardTopUpPage() {
   const cardId = id ? Number(id) : NaN;
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Store extra data from methods response
-  const extraRef = useRef({ userBalance: 0, maxAmount: 0 });
+  const [extra, setExtra] = useState({ userBalance: 0, maxAmount: 0 });
 
   const fetchMethodsFn = useCallback(async () => {
     const data = await getTopUpsMethodsCard();
-    extraRef.current = { userBalance: data.user_balance, maxAmount: data.max_amount };
+    setExtra({ userBalance: data.user_balance, maxAmount: data.max_amount });
     return { methods: data.methods, usdToRub: data.usd_to_rub };
   }, []);
 
@@ -43,10 +41,10 @@ export function CardTopUpPage() {
 
   const getEffectiveMax = useCallback((method: TopUpMethodItem) => {
     if (method.name === "balance") {
-      return Math.min(method.max_amount, extraRef.current.maxAmount);
+      return Math.min(method.max_amount, extra.maxAmount);
     }
     return method.max_amount;
-  }, []);
+  }, [extra.maxAmount]);
 
   const skipFinalForMethod = useCallback((name: string) => name === "balance", []);
 
@@ -128,7 +126,7 @@ export function CardTopUpPage() {
     : "Выберите метод оплаты";
 
   const rightHint = isBalanceMethod
-    ? `Баланс: $${extraRef.current.userBalance.toFixed(2)}`
+    ? `Баланс: $${extra.userBalance.toFixed(2)}`
     : flow.usdToRub
       ? `Курс: 1 $ ≈ ${flow.usdToRub} ₽`
       : undefined;
@@ -184,7 +182,7 @@ function CardTopUpHeader() {
         <>
           Пополнение
           <br />
-          карты
+          баланса карты
         </>
       }
     />

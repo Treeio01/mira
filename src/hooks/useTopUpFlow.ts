@@ -71,13 +71,15 @@ export function useTopUpFlow({
 
   // Stable refs for config functions to avoid re-triggering effects
   const fetchMethodsRef = useRef(fetchMethodsFn);
-  fetchMethodsRef.current = fetchMethodsFn;
   const fetchFinalRef = useRef(fetchFinalFn);
-  fetchFinalRef.current = fetchFinalFn;
   const getEffectiveMaxRef = useRef(getEffectiveMax);
-  getEffectiveMaxRef.current = getEffectiveMax;
   const skipFinalRef = useRef(skipFinalForMethod);
-  skipFinalRef.current = skipFinalForMethod;
+  useEffect(() => {
+    fetchMethodsRef.current = fetchMethodsFn;
+    fetchFinalRef.current = fetchFinalFn;
+    getEffectiveMaxRef.current = getEffectiveMax;
+    skipFinalRef.current = skipFinalForMethod;
+  });
 
   const retryMethods = useCallback(async () => {
     setMethodsLoading(true);

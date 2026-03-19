@@ -5,7 +5,7 @@ import { getWebApp } from '../lib/telegram';
 export function useBackButton(onBack?: () => void) {
   const navigate = useNavigate();
   const callbackRef = useRef(onBack);
-  callbackRef.current = onBack;
+  useEffect(() => { callbackRef.current = onBack; });
 
   useEffect(() => {
     const webApp = getWebApp();

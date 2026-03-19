@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { useFixedLayerPhase } from './ui/FixedLayer';
+import { useFixedLayerPhase } from './ui/FixedLayerContext';
 
 export function PageTransition() {
   const location = useLocation();

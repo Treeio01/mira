@@ -14,7 +14,7 @@ interface MainButtonOptions {
 export function useMainButton(options: MainButtonOptions) {
   const { text, onClick, disabled = false, visible = true, color, textColor, showProgress = false } = options;
   const callbackRef = useRef(onClick);
-  callbackRef.current = onClick;
+  useEffect(() => { callbackRef.current = onClick; });
 
   useEffect(() => {
     const webApp = getWebApp();

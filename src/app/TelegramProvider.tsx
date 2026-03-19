@@ -1,9 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTelegram } from '../hooks/useTelegram';
-
-type TelegramContextValue = ReturnType<typeof useTelegram>;
-
-const TelegramContext = createContext<TelegramContextValue | null>(null);
+import { TelegramContext } from './TelegramContext';
 
 export function TelegramProvider({ children }: { children: ReactNode }) {
   const telegram = useTelegram();
@@ -15,12 +12,4 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
       {children}
     </TelegramContext.Provider>
   );
-}
-
-export function useTelegramContext(): TelegramContextValue {
-  const ctx = useContext(TelegramContext);
-  if (!ctx) {
-    throw new Error('useTelegramContext must be used within TelegramProvider');
-  }
-  return ctx;
 }

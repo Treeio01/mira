@@ -20,6 +20,8 @@ interface CardsState {
   current: CardInfoItem | null;
   currentLoading: boolean;
   currentError: string | null;
+
+  /** @internal */ _cardInfoAbort: AbortController | null;
 }
 
 interface CardsActions {
@@ -36,7 +38,6 @@ type CardsStore = CardsState & CardsActions;
 
 let favoriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
 const cardsStale = createStaleTracker();
-let cardInfoAbort: AbortController | null = null;
 
 // ── Store ──
 
@@ -48,6 +49,7 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   current: null,
   currentLoading: false,
   currentError: null,
+  _cardInfoAbort: null,
 
   fetchCards: async () => {
     if (get().listLoading || cardsStale.isFresh()) return;
@@ -63,11 +65,9 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   },
 
   fetchCardInfo: async (cardId) => {
-    cardInfoAbort?.abort();
+    get()._cardInfoAbort?.abort();
     const controller = new AbortController();
-    cardInfoAbort = controller;
-
-    set({ currentLoading: true, currentError: null });
+    set({ _cardInfoAbort: controller, currentLoading: true, currentError: null });
 
     try {
       const { card_info } = await apiGetCardInfo({ card_id: cardId }, controller.signal);
@@ -126,9 +126,8 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   },
 
   clearCurrent: () => {
-    cardInfoAbort?.abort();
-    cardInfoAbort = null;
-    set({ current: null, currentError: null, currentLoading: false });
+    get()._cardInfoAbort?.abort();
+    set({ current: null, currentError: null, currentLoading: false, _cardInfoAbort: null });
   },
 }));
 

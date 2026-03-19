@@ -8,14 +8,9 @@ import { ReferralIcon } from '../icons/ReferralIcon';
 import { PuzzleIcon } from '../icons/PuzzleIcon';
 import { ROUTES } from '../../lib/routes';
 import { useMenuStore, selectSupportUrl } from '../../store';
-import { openUrl } from '../../lib/openUrl';
 
 export function QuickActions() {
   const supportUrl = useMenuStore(selectSupportUrl);
-
-  const handleSupport = () => {
-    if (supportUrl) openUrl(supportUrl);
-  };
 
   return (
     <div className="flex w-full gap-1.5 flex-col">
@@ -43,7 +38,7 @@ export function QuickActions() {
           icon={<PuzzleIcon />}
           image={supportImg}
           label={<>Служба<br />поддержки</>}
-          onClick={handleSupport}
+          href={supportUrl || undefined}
         />
       </div>
     </div>

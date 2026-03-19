@@ -1,15 +1,6 @@
-import { createContext, useContext, useRef, useState, useEffect, type ReactNode } from 'react';
+import { useRef, useState, useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-
-interface FixedLayerValue {
-  target: HTMLDivElement | null;
-  setPhase: (phase: 'visible' | 'exiting') => void;
-}
-
-const FixedLayerContext = createContext<FixedLayerValue>({
-  target: null,
-  setPhase: () => {},
-});
+import { FixedLayerContext, useFixedLayerTarget } from './FixedLayerContext';
 
 export function FixedLayerProvider({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,13 +28,8 @@ export function FixedLayerProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useFixedLayerPhase() {
-  const { setPhase } = useContext(FixedLayerContext);
-  return setPhase;
-}
-
 export function Fixed({ children }: { children: ReactNode }) {
-  const { target } = useContext(FixedLayerContext);
+  const target = useFixedLayerTarget();
   if (!target) return null;
   return createPortal(children, target);
 }

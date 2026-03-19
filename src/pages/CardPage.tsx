@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { BalanceCard } from '../components/sections/BalanceCard';
 import { CardNameEditor } from '../components/cards/CardNameEditor';
@@ -6,7 +6,7 @@ import { InfoRow } from '../components/ui/InfoRow';
 import { InfoRowSkeleton } from '../components/ui/InfoRowSkeleton';
 import { PageLayout } from '../components/ui/PageLayout';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
-import { useModal } from '../components/ui/ModalProvider';
+import { useModal } from '../components/ui/ModalContext';
 import { WarningIcon } from '../components/icons/WarningIcon';
 import { useCardsStore, selectCurrentCard, selectCurrentCardLoading, selectCurrentCardError } from '../store';
 import { ROUTES } from '../lib/routes';
@@ -24,10 +24,9 @@ export function CardPage() {
   const parsedId = id ? Number(id) : NaN;
   const cardId = Number.isFinite(parsedId) ? parsedId : null;
 
-  const modalShown = useRef(false);
+  const [modalShownForId, setModalShownForId] = useState<number | null>(null);
 
   useEffect(() => {
-    modalShown.current = false;
     if (cardId != null) {
       fetchCardInfo(cardId);
     }
@@ -35,8 +34,8 @@ export function CardPage() {
   }, [cardId, fetchCardInfo, clearCurrent]);
 
   useEffect(() => {
-    if (card && !modalShown.current) {
-      modalShown.current = true;
+    if (card && cardId != null && modalShownForId !== cardId) {
+      setModalShownForId(cardId);
       showModal({
         icon: <WarningIcon />,
         title: 'Важно',
@@ -44,7 +43,7 @@ export function CardPage() {
         buttonText: 'Продолжить',
       });
     }
-  }, [card, showModal]);
+  }, [card, cardId, modalShownForId, showModal]);
 
   const handleRetry = useCallback(() => {
     if (cardId != null) fetchCardInfo(cardId);

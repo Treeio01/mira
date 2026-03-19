@@ -76,7 +76,7 @@ async function ensureValidToken(): Promise<string | null> {
 export async function apiRequest<T>(
   endpoint: string,
   options: {
-    method?: string;
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     body?: unknown;
     skipAuth?: boolean;
     signal?: AbortSignal;
