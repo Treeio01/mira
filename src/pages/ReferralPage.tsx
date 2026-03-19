@@ -9,6 +9,8 @@ import { UserIdBadge } from '../components/ui/UserIdBadge';
 import { useReferralStore, selectRefData, selectRefLoading, selectRefError } from '../store';
 import blurImage from '../assets/img/reffer-header-blur-img.png';
 import noBlurImage from '../assets/img/reffer-header-img.png';
+import inviteImg from '../assets/img/refferal-invite-block-img.png';
+import inviteBlurImg from '../assets/img/refferal-invite-block-img-blur.png';
 
 export default function ReferralPage() {
   const data = useReferralStore(selectRefData);
@@ -42,11 +44,13 @@ export default function ReferralPage() {
       </GradientHeader>
 
       <div
-        className="flex w-full rounded-[14px] border border-white/15 overflow-hidden"
-        style={{ background: 'linear-gradient(to bottom, #15111F, #341474)' }}
+        className="flex w-full rounded-[14px] border border-white/15 overflow-hidden relative"
+        style={{ background: 'linear-gradient(to bottom, var(--color-surface), #341474)' }}
       >
-        <div className="flex w-full py-[18px] px-[44px] items-center justify-center">
-          <span className="text-white font-medium text-[16px] leading-[130%] tracking-[-0.02em] text-center">
+        <img src={inviteImg} className="absolute right-0 bottom-0" alt="" />
+        <img src={inviteBlurImg} className="absolute left-0 bottom-0" alt="" />
+        <div className="flex w-full py-[18px] px-11 items-center justify-center">
+          <span className="text-white font-medium text-base leading-[130%] tracking-[-0.02em] text-center">
             Приглашайте новых пользователей
             <br />и зарабатывайте $2.50 с каждой
             <br />их покупки
