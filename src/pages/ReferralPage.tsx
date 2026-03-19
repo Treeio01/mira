@@ -41,6 +41,19 @@ export default function ReferralPage() {
         <UserIdBadge />
       </GradientHeader>
 
+      <div
+        className="flex w-full rounded-[14px] border border-white/15 overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom, #15111F, #341474)' }}
+      >
+        <div className="flex w-full py-[18px] px-[44px] items-center justify-center">
+          <span className="text-white font-medium text-[16px] leading-[130%] tracking-[-0.02em] text-center">
+            Приглашайте новых пользователей
+            <br />и зарабатывайте $2.50 с каждой
+            <br />их покупки
+          </span>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-1.5 w-full">
         <span className="text-white font-medium text-xl leading-[160%] tracking-[-0.02em]">
           Ссылка для приглашения
