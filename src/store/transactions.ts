@@ -8,7 +8,7 @@ import { extractErrorMessage } from '../lib/error';
 /** API-level filters (sent to server) */
 const ACCOUNT_FILTER_KEYS = new Set(['all', 'main_balance']);
 function isAccountFilter(key: string): boolean {
-  return ACCOUNT_FILTER_KEYS.has(key) || key.startsWith('card_');
+  return ACCOUNT_FILTER_KEYS.has(key) || /^card_\{?\d+\}?$/.test(key);
 }
 
 /** Client-side type filter matchers (matched against transaction `name`) */
@@ -177,6 +177,21 @@ export const selectTransactionsCount = (s: TransactionsStore) => s.count;
 export const selectTransactionsLoading = (s: TransactionsStore) => s.loading;
 export const selectTransactionsError = (s: TransactionsStore) => s.error;
 export const selectTransactionFilters = (s: TransactionsStore) => s.filters;
+
+/** Returns unique card accounts from loaded transactions */
+let _prevAccountItems: TransactionItem[] = [];
+let _prevAccounts: string[] = [];
+
+export const selectCardAccounts = (s: TransactionsStore): string[] => {
+  if (s.items === _prevAccountItems) return _prevAccounts;
+  _prevAccountItems = s.items;
+  const set = new Set<string>();
+  for (const tx of s.items) {
+    if (tx.account.startsWith('card_')) set.add(tx.account);
+  }
+  _prevAccounts = Array.from(set);
+  return _prevAccounts;
+};
 
 /** Returns items with client-side type filters applied (memoized) */
 let _prevItems: TransactionItem[] = [];

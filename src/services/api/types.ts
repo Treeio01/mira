@@ -256,8 +256,8 @@ export interface TransactionItem {
   name: string;
   amount: string;
   color: string;
-  merchant: string | null;
-  transaction_id: string | null;
+  merchant?: string | null;
+  transaction_id?: string | null;
   date: string;
   date_timestamp: number;
   account: string;
