@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { BottomSheet } from '../ui/BottomSheet';
-import { selectCards, useCardsStore, useTransactionsStore, selectCardAccounts } from '../../store';
+import { selectCards, useCardsStore } from '../../store';
 
 interface TypeFilterSheetProps {
   open: boolean;
@@ -21,7 +21,6 @@ interface FilterSection {
 
 export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: TypeFilterSheetProps) {
   const cards = useCardsStore(selectCards);
-  const cardAccounts = useTransactionsStore(selectCardAccounts);
   const [selected, setSelected] = useState<string[]>(currentFilters);
   const [prevOpen, setPrevOpen] = useState(false);
 
@@ -33,20 +32,6 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
     setPrevOpen(open);
   }
 
-  // Map card accounts from transactions to card labels from list_cards
-  const cardOptions = useMemo(() => {
-    return cardAccounts.map((account) => {
-      // account format: "card_{326516}" or "card_326516"
-      // Try to match with cards by position (same order)
-      const idx = cardAccounts.indexOf(account);
-      const card = cards[idx];
-      const label = card
-        ? `Карта *${card.number.replace(/\s/g, '').slice(-4)}`
-        : `Карта ${account.replace(/card_\{?|\}?/g, '')}`;
-      return { key: account, label };
-    });
-  }, [cardAccounts, cards]);
-
   const sections: FilterSection[] = useMemo(() => [
     {
       options: [{ key: 'all', label: 'Все операции' }],
@@ -55,7 +40,10 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
       title: 'СЧЕТА',
       options: [
         { key: 'main_balance', label: 'Основной баланс' },
-        ...cardOptions,
+        ...cards.map((card) => ({
+          key: `card_${card.card_id}`,
+          label: `Карта *${card.number.replace(/\s/g, '').slice(-4)}`,
+        })),
       ],
     },
     {
@@ -74,7 +62,7 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
         { key: 'other', label: 'Другие расходы' },
       ],
     },
-  ], [cardOptions]);
+  ], [cards]);
 
   const handleToggle = useCallback((key: string) => {
     if (key === 'all') {

@@ -77,7 +77,16 @@ export const BottomSheet = memo(function BottomSheet({
             : 'transform 200ms ease-in',
         }}
       >
-   
+        {title && (
+          <div className="flex items-center justify-between px-5 py-4 shrink-0">
+            <span className="text-white font-semibold text-base leading-[140%] tracking-[-0.02em]">{title}</span>
+            <button onClick={onClose} className="text-white/40 hover:text-white/60 transition-colors">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+        )}
         <div className="flex-1 overflow-y-auto overscroll-contain">
           {children}
         </div>

@@ -166,7 +166,7 @@ export function DatePickerSheet({ open, onClose, dateFrom, dateTo, onApply }: Da
   }, [onApply, onClose]);
 
   return (
-    <BottomSheet open={open} onClose={onClose} title="Выберите период">
+    <BottomSheet open={open} onClose={onClose}>
       <div className="flex flex-col bg-[#0A080F] rounded-[24px] overflow-hidden">
         {/* Month navigation */}
         <div className="flex items-center justify-between p-4 bg-[#221C33]">
