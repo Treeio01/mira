@@ -77,6 +77,14 @@ a {
   background: color-mix(in srgb, var(--color-primary) 90%, transparent);
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes shimmer {
   100% {
     transform: translateX(100%);

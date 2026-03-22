@@ -19,6 +19,7 @@ export function QuickActions() {
           icon={<BankIcon />}
           image={historyTransaction}
           label={<>История<br />транзакций</>}
+          to={ROUTES.TRANSACTIONS}
         />
         <ActionCard
           icon={<ReferralIcon />}

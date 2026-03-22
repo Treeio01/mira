@@ -78,6 +78,22 @@ export const GetTopUpsMethodResponseSchema = z.object({
   methods: z.array(TopUpMethodItemSchema),
 });
 
+export const TransactionItemSchema = z.object({
+  name: z.string(),
+  amount: z.string(),
+  color: z.string(),
+  merchant: z.string().nullable().optional(),
+  transaction_id: z.string().nullable().optional(),
+  date: z.string(),
+  date_timestamp: z.number(),
+  account: z.string(),
+});
+
+export const TransactionsResponseSchema = z.object({
+  count: z.number(),
+  transactions: z.array(TransactionItemSchema),
+});
+
 export const GetTopUpsMethodCardResponseSchema = z.object({
   user_balance: z.number(),
   max_amount: z.number(),

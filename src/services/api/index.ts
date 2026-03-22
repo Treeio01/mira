@@ -3,6 +3,7 @@ export { getMainMenu } from './menu';
 export { getCards, getCardInfo, makeFavorite, updateCardName } from './cards';
 export { getAvailableCards, confirmBuyCard, getAvailableEsim, confirmBuyEsim } from './issue';
 export { getRefInfo } from './referral';
+export { getTransactions } from './transactions';
 export { getTopUpsMethods, getTopUpsFinalAmount, createTopUpBalance, getTopUpsMethodsCard, getTopUpsFinalAmountCard, createTopUpCard } from './topup';
 export { tokenStorage } from './token';
 export { apiRequest, apiRequestValidated } from './client';

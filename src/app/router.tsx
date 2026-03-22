@@ -14,6 +14,7 @@ const EsimPage = lazy(() => import('../pages/EsimPage'));
 const EsimConfirmPage = lazy(() => import('../pages/EsimConfirmPage'));
 const ReferralPage = lazy(() => import('../pages/ReferralPage'));
 const TopUpPage = lazy(() => import('../pages/TopUpPage'));
+const TransactionsPage = lazy(() => import('../pages/TransactionsPage'));
 
 function page(Component: React.LazyExoticComponent<() => React.JSX.Element>) {
   return (
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
       { path: `${ROUTES.ESIM}/:type`, element: page(EsimConfirmPage), errorElement: <RouteErrorBoundary /> },
       { path: ROUTES.REFERRAL, element: page(ReferralPage), errorElement: <RouteErrorBoundary /> },
       { path: ROUTES.TOP_UP, element: page(TopUpPage), errorElement: <RouteErrorBoundary /> },
+      { path: ROUTES.TRANSACTIONS, element: page(TransactionsPage), errorElement: <RouteErrorBoundary /> },
     ],
   },
 ]);

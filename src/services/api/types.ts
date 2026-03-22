@@ -250,6 +250,31 @@ export interface CreateTopUpCardResponse {
   };
 }
 
+// ── Transactions ──
+
+export interface TransactionItem {
+  name: string;
+  amount: string;
+  color: string;
+  merchant: string | null;
+  transaction_id: string | null;
+  date: string;
+  date_timestamp: number;
+  account: string;
+}
+
+export interface TransactionsPayload {
+  filters: string[];
+  start_date?: string | null;
+  end_date?: string | null;
+  page?: number;
+}
+
+export interface TransactionsResponse {
+  count: number;
+  transactions: TransactionItem[];
+}
+
 // ── Errors ──
 
 export interface ApiErrorResponse {
