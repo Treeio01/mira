@@ -14,6 +14,7 @@ import {
   selectBuying,
   selectBuyError,
 } from "../store";
+import { useModal } from "../components/ui/ModalContext";
 
 export default function CardConfirmPage() {
   const { type } = useParams();
@@ -21,6 +22,7 @@ export default function CardConfirmPage() {
   const parsed = type ? Number(type) : NaN;
   const categoryId = Number.isFinite(parsed) ? parsed : null;
 
+  const { showModal } = useModal();
   const cards = useIssueStore(selectIssueCards);
   const isLoading = useIssueStore(selectIssueCardsLoading);
   const error = useIssueStore(selectIssueCardsError);
@@ -45,7 +47,15 @@ export default function CardConfirmPage() {
   const handleBuy = async () => {
     if (!card || !amount) return;
     const success = await buyCard(card.category_id, parseFloat(amount));
-    if (success) navigate(ROUTES.CARDS);
+    if (success) {
+      showModal({
+        title: "Успешно",
+        description:
+          "Карта успешно приобретена и вскоре появится в вашем профиле. Баланс будет пополнен в течение нескольких минут.",
+        buttonText: "Отлично",
+        onButtonClick: () => navigate(ROUTES.CARDS),
+      });
+    }
   };
 
   if (error) {

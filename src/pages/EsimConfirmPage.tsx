@@ -14,6 +14,7 @@ import {
   selectBuying,
   selectBuyError,
 } from "../store";
+import { useModal } from "../components/ui/ModalContext";
 
 export default function EsimConfirmPage() {
   const { type } = useParams();
@@ -21,6 +22,7 @@ export default function EsimConfirmPage() {
   const parsed = type ? Number(type) : NaN;
   const categoryId = Number.isFinite(parsed) ? parsed : null;
 
+  const { showModal } = useModal();
   const esims = useIssueStore(selectEsims);
   const isLoading = useIssueStore(selectEsimsLoading);
   const error = useIssueStore(selectEsimsError);
@@ -43,7 +45,14 @@ export default function EsimConfirmPage() {
   const handleBuy = async () => {
     if (!esim) return;
     const success = await buyEsim(esim.category_id);
-    if (success) navigate(ROUTES.CARDS);
+    if (success) {
+      showModal({
+        title: "Вы успешно приобрели ESIM",
+        description: "Для получения вашего заказа обратитесь в поддержку.",
+        buttonText: "Понятно",
+        onButtonClick: () => navigate(ROUTES.CARDS),
+      });
+    }
   };
 
   if (error) {

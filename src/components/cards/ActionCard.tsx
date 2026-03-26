@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getWebApp } from '../../lib/telegram';
 
 interface ActionCardProps {
   icon: ReactNode;
@@ -12,6 +13,15 @@ interface ActionCardProps {
 
 const cardBg = 'radial-gradient(89.06% 172.06% at 60.96% -69.61%, var(--color-primary) 0%, rgba(102, 26, 255, 0.00) 99.68%), var(--color-surface)';
 const cardClassName = 'flex w-full relative overflow-hidden pt-12.5 p-3 rounded-[14px] cursor-pointer active:scale-[0.97] transition-transform duration-150 no-underline';
+
+function isTelegramLink(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === 't.me' || parsed.hostname === 'telegram.me';
+  } catch {
+    return false;
+  }
+}
 
 export function ActionCard({ icon, image, label, to, href, onClick }: ActionCardProps) {
   const navigate = useNavigate();
@@ -29,6 +39,18 @@ export function ActionCard({ icon, image, label, to, href, onClick }: ActionCard
   );
 
   if (href) {
+    const handleClick = (e: React.MouseEvent) => {
+      if (isTelegramLink(href)) {
+        e.preventDefault();
+        const webApp = getWebApp();
+        if (webApp) {
+          webApp.openTelegramLink(href);
+        } else {
+          window.open(href, '_blank');
+        }
+      }
+    };
+
     return (
       <a
         href={href}
@@ -36,6 +58,7 @@ export function ActionCard({ icon, image, label, to, href, onClick }: ActionCard
         rel="noopener noreferrer"
         className={cardClassName}
         style={{ background: cardBg }}
+        onClick={handleClick}
       >
         {inner}
       </a>

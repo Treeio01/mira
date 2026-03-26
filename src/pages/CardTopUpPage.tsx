@@ -148,6 +148,10 @@ export default function CardTopUpPage() {
           hasError={flow.isBelowMin || flow.isAboveMax}
           hint={limitHint}
           rightHint={rightHint}
+          onMax={isBalanceMethod && flow.activeMethod ? () => {
+            const max = getEffectiveMax(flow.activeMethod!);
+            flow.setAmount(max.toFixed(2));
+          } : undefined}
         />
 
         <h2 className="text-white font-medium text-[20px] leading-[160%] tracking-[-0.02em]">
@@ -162,7 +166,9 @@ export default function CardTopUpPage() {
       </div>
 
       <ConfirmFooter
-        total={flow.amountNum}
+        total={isBalanceMethod && flow.activeMethod
+          ? flow.amountNum * (1 + flow.activeMethod.commission / 100)
+          : flow.amountNum}
         totalText={isBalanceMethod ? undefined : flow.finalText ?? undefined}
         buying={submitting}
         buyError={submitError}
