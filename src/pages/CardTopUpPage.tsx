@@ -46,20 +46,17 @@ export default function CardTopUpPage() {
     return method.max_amount;
   }, [extra.maxAmount]);
 
-  const skipFinalForMethod = useCallback((name: string) => name === "balance", []);
-
   const flow = useTopUpFlow({
     fetchMethodsFn,
     fetchFinalFn,
     getEffectiveMax,
-    skipFinalForMethod,
   });
 
   const isBalanceMethod = flow.selectedMethod === "balance";
 
   const { submit, submitting, error: submitError } = useSubmit(
     useCallback(async () => {
-      if (!flow.isValid || !flow.selectedMethod || !Number.isFinite(cardId)) return;
+      if (!flow.isValid || !flow.selectedMethod || !flow.finalText || !Number.isFinite(cardId)) return;
 
       const { result } = await createTopUpCard({
         card_id: cardId,
@@ -169,10 +166,10 @@ export default function CardTopUpPage() {
         total={isBalanceMethod && flow.activeMethod
           ? flow.amountNum * (1 + flow.activeMethod.commission / 100)
           : flow.amountNum}
-        totalText={isBalanceMethod ? undefined : flow.finalText ?? undefined}
+        totalText={flow.finalText ?? undefined}
         buying={submitting}
         buyError={submitError}
-        disabled={!flow.isValid || (!isBalanceMethod && flow.finalLoading)}
+        disabled={!flow.isValid || flow.finalLoading || !flow.finalText}
         onConfirm={submit}
         buttonText={buttonText}
         wrapped={false}

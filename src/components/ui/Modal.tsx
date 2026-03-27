@@ -51,11 +51,8 @@ export const Modal = memo(function Modal({
   }, [onClose]);
 
   const handleButtonClick = useCallback(() => {
-    if (onButtonClick) {
-      onButtonClick();
-    } else {
-      onClose();
-    }
+    onClose();
+    onButtonClick?.();
   }, [onButtonClick, onClose]);
 
   // Focus trap
