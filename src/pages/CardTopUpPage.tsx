@@ -117,9 +117,7 @@ export default function CardTopUpPage() {
   }
 
   const limitHint = flow.activeMethod
-    ? isBalanceMethod
-      ? `От $${flow.activeMethod.min_amount} до $${(getEffectiveMax(flow.activeMethod)).toFixed(2)}`
-      : `От $${flow.activeMethod.min_amount} до $${flow.activeMethod.max_amount}`
+    ? `От $${flow.activeMethod.min_amount} до $${flow.activeMethod.max_amount}`
     : "Выберите метод оплаты";
 
   const rightHint = isBalanceMethod
