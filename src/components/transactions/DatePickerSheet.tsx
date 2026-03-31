@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { BottomSheet } from '../ui/BottomSheet';
-import { useTransactionsStore, selectTransactionsRaw } from '../../store';
+import { useTransactionsStore, selectTransactions } from '../../store';
 
 interface DatePickerSheetProps {
   open: boolean;
@@ -76,7 +76,7 @@ export function DatePickerSheet({ open, onClose, dateFrom, dateTo, onApply }: Da
   const [selTo, setSelTo] = useState<Date | null>(dateTo ? new Date(dateTo) : null);
   const [selectingEnd, setSelectingEnd] = useState(false);
 
-  const transactions = useTransactionsStore(selectTransactionsRaw);
+  const transactions = useTransactionsStore(selectTransactions);
 
   // Build a set of day keys that have transactions
   const txDaySet = useMemo(() => {

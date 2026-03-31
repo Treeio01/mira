@@ -5,8 +5,9 @@ import { selectCards, useCardsStore } from '../../store';
 interface TypeFilterSheetProps {
   open: boolean;
   onClose: () => void;
-  currentFilters: string[];
-  onApply: (filters: string[]) => void;
+  currentAccounts: string[];
+  currentTypes: string[];
+  onApply: (accounts: string[], types: string[]) => void;
 }
 
 interface FilterOption {
@@ -16,17 +17,20 @@ interface FilterOption {
 
 interface FilterSection {
   title?: string;
+  group: 'accounts' | 'types';
   options: FilterOption[];
 }
 
-export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: TypeFilterSheetProps) {
+export function TypeFilterSheet({ open, onClose, currentAccounts, currentTypes, onApply }: TypeFilterSheetProps) {
   const cards = useCardsStore(selectCards);
-  const [selected, setSelected] = useState<string[]>(currentFilters);
+  const [accounts, setAccounts] = useState<string[]>(currentAccounts);
+  const [types, setTypes] = useState<string[]>(currentTypes);
   const [prevOpen, setPrevOpen] = useState(false);
 
   // Sync only on open transition (false → true)
   if (open && !prevOpen) {
-    setSelected(currentFilters);
+    setAccounts(currentAccounts);
+    setTypes(currentTypes);
   }
   if (open !== prevOpen) {
     setPrevOpen(open);
@@ -34,10 +38,12 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
 
   const sections: FilterSection[] = useMemo(() => [
     {
-      options: [{ key: 'all', label: 'Все операции' }],
+      group: 'accounts' as const,
+      options: [{ key: 'all', label: 'Все счета' }],
     },
     {
       title: 'СЧЕТА',
+      group: 'accounts' as const,
       options: [
         { key: 'main_balance', label: 'Основной баланс' },
         ...cards.map((card) => ({
@@ -47,29 +53,30 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
       ],
     },
     {
-      title: 'ПОПОЛНЕНИЯ',
-      options: [
-        { key: 'topup_balance', label: 'Пополнение баланса' },
-        { key: 'topup_cards', label: 'Пополнение карт' },
-      ],
+      group: 'types' as const,
+      options: [{ key: 'all', label: 'Все операции' }],
     },
     {
-      title: 'ОПЛАТЫ',
+      title: 'ТИП ОПЕРАЦИИ',
+      group: 'types' as const,
       options: [
-        { key: 'purchase', label: 'Оплата товара' },
-        { key: 'declined', label: 'Отклонённые транзакции' },
-        { key: 'commission', label: 'Комиссии' },
-        { key: 'other', label: 'Другие расходы' },
+        { key: 'topup_balance', label: 'Пополнение баланса' },
+        { key: 'topup_card', label: 'Пополнение карт' },
+        { key: 'success_payments', label: 'Успешные платежи' },
+        { key: 'failed_payments', label: 'Отклонённые транзакции' },
+        { key: 'commissions', label: 'Комиссии' },
+        { key: 'others', label: 'Другие' },
       ],
     },
   ], [cards]);
 
-  const handleToggle = useCallback((key: string) => {
+  const handleToggle = useCallback((group: 'accounts' | 'types', key: string) => {
+    const setter = group === 'accounts' ? setAccounts : setTypes;
     if (key === 'all') {
-      setSelected(['all']);
+      setter(['all']);
       return;
     }
-    setSelected((prev) => {
+    setter((prev) => {
       const withoutAll = prev.filter((k) => k !== 'all');
       if (withoutAll.includes(key)) {
         const next = withoutAll.filter((k) => k !== key);
@@ -80,11 +87,13 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
   }, []);
 
   const handleApply = useCallback(() => {
-    onApply(selected);
+    onApply(accounts, types);
     onClose();
-  }, [selected, onApply, onClose]);
+  }, [accounts, types, onApply, onClose]);
 
-  const isSelected = useCallback((key: string) => selected.includes(key), [selected]);
+  const isSelected = useCallback((group: 'accounts' | 'types', key: string) => {
+    return (group === 'accounts' ? accounts : types).includes(key);
+  }, [accounts, types]);
 
   return (
     <BottomSheet open={open} onClose={onClose} title="Какие операции показать?" footer={
@@ -111,7 +120,7 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
               {section.options.map((opt) => (
                 <div key={opt.key}>
                   <button
-                    onClick={() => handleToggle(opt.key)}
+                    onClick={() => handleToggle(section.group, opt.key)}
                     className="flex items-center justify-between w-full px-4 py-3 active:bg-white/[0.03] transition-colors"
                   >
                     <span className="text-white text-sm font-medium leading-[140%] tracking-[-0.02em]">
@@ -119,12 +128,12 @@ export function TypeFilterSheet({ open, onClose, currentFilters, onApply }: Type
                     </span>
                     <div
                       className={`flex items-center justify-center w-6 h-6 rounded-full border-2 transition-colors ${
-                        isSelected(opt.key)
+                        isSelected(section.group, opt.key)
                           ? 'border-primary bg-primary'
                           : 'border-white/20'
                       }`}
                     >
-                      {isSelected(opt.key) && (
+                      {isSelected(section.group, opt.key) && (
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                           <path d="M2.5 6L5 8.5L9.5 4" stroke="#221C33" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>

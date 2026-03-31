@@ -38,7 +38,7 @@ export default function CardsPage() {
   }, [cards, search]);
 
   return (
-    <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-18">
+    <div className="flex relative flex-col p-4 gap-4 w-full h-full pb-18 overflow-y-auto no-scrollbar">
       <GradientHeader className="items-end justify-between gap-2.5">
         <span className="text-white font-semibold text-2xl leading-[120%] tracking-[-0.02em] z-10">
           Ваши<br />карты

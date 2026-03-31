@@ -11,7 +11,10 @@ const REQUEST_TIMEOUT = 15_000;
 
 let refreshPromise: Promise<RefreshTokenResponse> | null = null;
 
-async function fetchWithTimeout(
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000;
+
+async function fetchOnce(
   url: string,
   init: RequestInit,
   externalSignal?: AbortSignal,
@@ -34,6 +37,36 @@ async function fetchWithTimeout(
     clearTimeout(timer);
     externalSignal?.removeEventListener('abort', onExternalAbort);
   }
+}
+
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  externalSignal?: AbortSignal,
+): Promise<Response> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (externalSignal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    try {
+      const res = await fetchOnce(url, init, externalSignal);
+      // Retry on 502/503/504
+      if (res.status >= 502 && res.status <= 504 && attempt < MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, RETRY_DELAY * (attempt + 1)));
+        continue;
+      }
+      return res;
+    } catch (e) {
+      lastError = e;
+      if (e instanceof DOMException && e.name === 'AbortError') throw e;
+      if (e instanceof ApiError && e.detail === 'Превышено время ожидания') throw e;
+      // Network error — retry
+      if (attempt < MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, RETRY_DELAY * (attempt + 1)));
+        continue;
+      }
+    }
+  }
+  throw lastError;
 }
 
 async function refreshToken(): Promise<RefreshTokenResponse> {

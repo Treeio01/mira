@@ -87,6 +87,7 @@ export const TransactionItemSchema = z.object({
   date: z.string(),
   date_timestamp: z.number(),
   account: z.string(),
+  type: z.string().optional(),
 });
 
 export const TransactionsResponseSchema = z.object({

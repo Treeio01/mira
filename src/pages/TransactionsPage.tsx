@@ -45,16 +45,16 @@ export default function TransactionsPage() {
     [setFilters, applyFilters],
   );
 
-  const handleTypeApply = useCallback(
-    (selected: string[]) => {
-      setFilters({ selected });
+  const handleFilterApply = useCallback(
+    (accounts: string[], types: string[]) => {
+      setFilters({ accounts, types });
       applyFilters();
     },
     [setFilters, applyFilters],
   );
 
   const hasDateFilter = filters.startDate || filters.endDate;
-  const hasAccountFilter = !filters.selected.includes('all');
+  const hasFilter = !filters.accounts.includes('all') || !filters.types.includes('all');
 
   return (
     <>
@@ -76,7 +76,7 @@ export default function TransactionsPage() {
           </button>
           <button
             onClick={() => setTypeFilterOpen(true)}
-            className={`flex w-full justify-center items-center gap-1.5 px-4 py-2.5 rounded-[8px] text-sm font-medium tracking-[-0.02em] transition-colors ${hasAccountFilter
+            className={`flex w-full justify-center items-center gap-1.5 px-4 py-2.5 rounded-[8px] text-sm font-medium tracking-[-0.02em] transition-colors ${hasFilter
                 ? 'bg-[#221C33] text-[#B6ACD2]'
                 : 'bg-[#221C33] text-[#B6ACD2]'
               }`}
@@ -122,8 +122,9 @@ export default function TransactionsPage() {
       <TypeFilterSheet
         open={typeFilterOpen}
         onClose={() => setTypeFilterOpen(false)}
-        currentFilters={filters.selected}
-        onApply={handleTypeApply}
+        currentAccounts={filters.accounts}
+        currentTypes={filters.types}
+        onApply={handleFilterApply}
       />
     </>
   );

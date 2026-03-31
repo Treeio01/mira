@@ -261,9 +261,11 @@ export interface TransactionItem {
   date: string;
   date_timestamp: number;
   account: string;
+  type?: string;
 }
 
 export interface TransactionsPayload {
+  accounts: string[];
   filters: string[];
   start_date?: string | null;
   end_date?: string | null;

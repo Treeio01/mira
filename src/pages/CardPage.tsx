@@ -78,6 +78,7 @@ export default function CardPage() {
         ) : (
           <>
             <CardNameEditor card={card} />
+            <InfoRow label="Категория" value={card.category_name} />
             <InfoRow label="Номер" value={card.number} copyValue={card.number} />
             <InfoRow label="Месяц/год" value={card.date} copyValue={card.date} />
             <InfoRow label="CVC" value={card.cvc} copyValue={card.cvc} />
