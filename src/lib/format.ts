@@ -14,6 +14,6 @@ export function getLastDigits(number: string): string {
 }
 
 export function resolveCardVariant(type: string): CardVariant {
-  if (type === 'Visa') return 'visa';
+  if (type.toLowerCase().includes('visa')) return 'visa';
   return 'mastercard';
 }
