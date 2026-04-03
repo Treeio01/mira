@@ -38,28 +38,22 @@ export function TypeFilterSheet({ open, onClose, currentAccounts, currentTypes, 
 
   const sections: FilterSection[] = useMemo(() => [
     {
-      group: 'accounts' as const,
-      options: [{ key: 'all', label: 'Все счета' }],
-    },
-    {
       title: 'СЧЕТА',
       group: 'accounts' as const,
       options: [
+        { key: 'all', label: 'Все счета' },
         { key: 'main_balance', label: 'Основной баланс' },
         ...cards.map((card) => ({
           key: `card_${card.card_id}`,
-          label: `Карта *${card.number.replace(/\s/g, '').slice(-4)}`,
+          label: card.card_name || `Карта *${card.number.replace(/\s/g, '').slice(-4)}`,
         })),
       ],
-    },
-    {
-      group: 'types' as const,
-      options: [{ key: 'all', label: 'Все операции' }],
     },
     {
       title: 'ТИП ОПЕРАЦИИ',
       group: 'types' as const,
       options: [
+        { key: 'all', label: 'Все операции' },
         { key: 'topup_balance', label: 'Пополнение баланса' },
         { key: 'topup_card', label: 'Пополнение карт' },
         { key: 'success_payments', label: 'Успешные платежи' },
