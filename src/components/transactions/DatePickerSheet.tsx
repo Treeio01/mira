@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { BottomSheet } from '../ui/BottomSheet';
 import { useTransactionsStore, selectTransactions } from '../../store';
 
@@ -75,10 +75,22 @@ export function DatePickerSheet({ open, onClose, dateFrom, dateTo, onApply }: Da
   const [selFrom, setSelFrom] = useState<Date | null>(dateFrom ? new Date(dateFrom) : null);
   const [selTo, setSelTo] = useState<Date | null>(dateTo ? new Date(dateTo) : null);
   const [selectingEnd, setSelectingEnd] = useState(false);
+  const [prevOpen, setPrevOpen] = useState(false);
+
+  if (open && !prevOpen) {
+    const now = new Date();
+    setViewYear(now.getFullYear());
+    setViewMonth(now.getMonth());
+    setSelFrom(dateFrom ? new Date(dateFrom) : null);
+    setSelTo(dateTo ? new Date(dateTo) : null);
+    setSelectingEnd(false);
+  }
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+  }
 
   const transactions = useTransactionsStore(selectTransactions);
 
-  // Build a set of day keys that have transactions
   const txDaySet = useMemo(() => {
     const set = new Set<string>();
     for (const tx of transactions) {
@@ -88,7 +100,6 @@ export function DatePickerSheet({ open, onClose, dateFrom, dateTo, onApply }: Da
     return set;
   }, [transactions]);
 
-  // Count transactions per day for the dot indicators
   const txDayCounts = useMemo(() => {
     const map = new Map<string, number>();
     for (const tx of transactions) {
@@ -98,18 +109,6 @@ export function DatePickerSheet({ open, onClose, dateFrom, dateTo, onApply }: Da
     }
     return map;
   }, [transactions]);
-
-  // Reset to current month when opening
-  useEffect(() => {
-    if (open) {
-      const now = new Date();
-      setViewYear(now.getFullYear());
-      setViewMonth(now.getMonth());
-      setSelFrom(dateFrom ? new Date(dateFrom) : null);
-      setSelTo(dateTo ? new Date(dateTo) : null);
-      setSelectingEnd(false);
-    }
-  }, [open, dateFrom, dateTo]);
 
   const days = useMemo(() => getCalendarDays(viewYear, viewMonth), [viewYear, viewMonth]);
 

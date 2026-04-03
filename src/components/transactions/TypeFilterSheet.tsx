@@ -27,7 +27,7 @@ export function TypeFilterSheet({ open, onClose, currentAccounts, currentTypes, 
   const [types, setTypes] = useState<string[]>(currentTypes);
   const [prevOpen, setPrevOpen] = useState(false);
 
-  // Sync only on open transition (false → true)
+
   if (open && !prevOpen) {
     setAccounts(currentAccounts);
     setTypes(currentTypes);
@@ -45,7 +45,7 @@ export function TypeFilterSheet({ open, onClose, currentAccounts, currentTypes, 
         { key: 'main_balance', label: 'Основной баланс' },
         ...cards.map((card) => ({
           key: `card_${card.card_id}`,
-          label: card.card_name || `Карта *${card.number.replace(/\s/g, '').slice(-4)}`,
+          label: `Карта *${card.number.replace(/\s/g, '').slice(-4)}${card.card_name ? ` · ${card.card_name}` : ''}`,
         })),
       ],
     },

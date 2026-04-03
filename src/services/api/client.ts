@@ -156,7 +156,7 @@ export async function apiRequest<T>(
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${refreshed.access_token}`,
         },
-      });
+      }, signal);
 
       if (!retryRes.ok) {
         const err = (await retryRes.json().catch(() => ({ detail: `HTTP ${retryRes.status}` }))) as ApiErrorResponse;

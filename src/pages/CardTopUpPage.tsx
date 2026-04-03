@@ -54,24 +54,26 @@ export default function CardTopUpPage() {
 
   const isBalanceMethod = flow.selectedMethod === "balance";
 
+  const submitFn = useCallback(async () => {
+    if (!flow.isValid || !flow.selectedMethod || !flow.finalText || !Number.isFinite(cardId)) return;
+
+    const { result } = await createTopUpCard({
+      card_id: cardId,
+      method_name: flow.selectedMethod,
+      amount: flow.amountNum,
+    });
+
+    if (result.status === "success") {
+      invalidateMenuCache();
+      setSuccessMessage("Отправили средства. Карта пополнится в течении нескольких минут");
+      return;
+    }
+
+    if (result.payment_url) openUrl(result.payment_url);
+  }, [flow.isValid, flow.selectedMethod, flow.finalText, flow.amountNum, cardId]);
+
   const { submit, submitting, error: submitError } = useSubmit(
-    useCallback(async () => {
-      if (!flow.isValid || !flow.selectedMethod || !flow.finalText || !Number.isFinite(cardId)) return;
-
-      const { result } = await createTopUpCard({
-        card_id: cardId,
-        method_name: flow.selectedMethod,
-        amount: flow.amountNum,
-      });
-
-      if (result.status === "success") {
-        invalidateMenuCache();
-        setSuccessMessage("Отправили средства. Карта пополнится в течении нескольких минут");
-        return;
-      }
-
-      if (result.payment_url) openUrl(result.payment_url);
-    }, [flow.isValid, flow.selectedMethod, flow.amountNum, cardId]),
+    submitFn,
     'Не удалось создать пополнение',
   );
 

@@ -104,12 +104,12 @@ export const useTransactionsStore = create<TransactionsStore>()((set, get) => ({
         controller.signal,
       );
       if (!controller.signal.aborted) {
-        set({
-          items: [...get().items, ...data.transactions],
+        set((s) => ({
+          items: [...s.items, ...data.transactions],
           count: data.count,
           loading: false,
-          filters: { ...filters, page: nextPage },
-        });
+          filters: { ...s.filters, page: nextPage },
+        }));
       }
     } catch (e) {
       if (!controller.signal.aborted) {

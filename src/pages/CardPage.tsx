@@ -72,7 +72,7 @@ export default function CardPage() {
 
       <div className="flex flex-col gap-1.5">
         {showSkeleton ? (
-          Array.from({ length: 7 }, (_, i) => (
+          Array.from({ length: 8 }, (_, i) => (
             <InfoRowSkeleton key={i} />
           ))
         ) : (

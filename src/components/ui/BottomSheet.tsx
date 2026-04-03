@@ -18,17 +18,24 @@ export const BottomSheet = memo(function BottomSheet({
 }: BottomSheetProps) {
   const [phase, setPhase] = useState<'closed' | 'entering' | 'visible' | 'exiting'>('closed');
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [prevOpen, setPrevOpen] = useState(false);
 
-  useEffect(() => {
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open && phase === 'closed') {
       setPhase('entering');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setPhase('visible'));
-      });
     } else if (!open && (phase === 'visible' || phase === 'entering')) {
       setPhase('exiting');
     }
-  }, [open, phase]);
+  }
+
+  useEffect(() => {
+    if (phase === 'entering') {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setPhase('visible'));
+      });
+    }
+  }, [phase]);
 
   const handleTransitionEnd = useCallback(() => {
     if (phase === 'exiting') setPhase('closed');

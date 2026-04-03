@@ -99,9 +99,7 @@ export function useTopUpFlow({
     retryMethods();
   }, [retryMethods]);
 
-  // ── Derived state ──
-
-  const amountNum = amount ? parseFloat(amount) : 0;
+  const amountNum = parseFloat(amount) || 0;
 
   const activeMethod = useMemo(
     () => methods.find((m) => m.name === selectedMethod) ?? null,
@@ -118,8 +116,6 @@ export function useTopUpFlow({
   const isValid = !isAmountInvalid && selectedMethod !== null;
 
   const skipsFinal = selectedMethod != null && (skipFinalRef.current?.(selectedMethod) ?? false);
-
-  // ── Fetch final amount ──
 
   useEffect(() => {
     finalAbortRef.current?.abort();

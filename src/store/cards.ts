@@ -38,6 +38,7 @@ type CardsStore = CardsState & CardsActions;
 
 let favoriteCache: { ref: ListCardItem[]; result: ListCardItem[] } = { ref: [], result: [] };
 const cardsStale = createStaleTracker();
+const pendingFavorites = new Set<number>();
 
 // ── Store ──
 
@@ -82,6 +83,9 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
   },
 
   toggleFavorite: async (cardId, isFavorite) => {
+    if (pendingFavorites.has(cardId)) return;
+    pendingFavorites.add(cardId);
+
     const prevList = get().list;
     const prevCurrent = get().current;
 
@@ -97,10 +101,13 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
 
     try {
       await apiMakeFavorite({ card_id: cardId, is_favorite: isFavorite });
-      invalidateMenuCache();
     } catch {
       set({ list: prevList, current: prevCurrent });
+      pendingFavorites.delete(cardId);
+      return;
     }
+    pendingFavorites.delete(cardId);
+    invalidateMenuCache();
   },
 
   renameCard: async (cardId, name) => {
@@ -119,10 +126,11 @@ export const useCardsStore = create<CardsStore>()((set, get) => ({
 
     try {
       await apiUpdateCardName({ card_id: cardId, card_name: name });
-      invalidateMenuCache();
     } catch {
       set({ current: prevCurrent, list: prevList });
+      return;
     }
+    invalidateMenuCache();
   },
 
   clearCurrent: () => {

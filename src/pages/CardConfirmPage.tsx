@@ -46,7 +46,7 @@ export default function CardConfirmPage() {
 
   const handleBuy = async () => {
     if (!card || !amount) return;
-    const success = await buyCard(card.category_id, parseFloat(amount));
+    const success = await buyCard(card.category_id, parseFloat(amount) || 0);
     if (success) {
       showModal({
         title: "Успешно",
@@ -87,7 +87,7 @@ export default function CardConfirmPage() {
     );
   }
 
-  const amountNum = amount ? parseFloat(amount) : 0;
+  const amountNum = parseFloat(amount) || 0;
   const totalNum = amountNum
     ? card.price + amountNum * (1 + card.top_up_comission / 100)
     : card.price;
@@ -147,7 +147,7 @@ export default function CardConfirmPage() {
         total={totalNum}
         buying={buying}
         buyError={buyError}
-        disabled={!amount || parseFloat(amount) < card.min_top_up}
+        disabled={!amountNum || amountNum < card.min_top_up}
         onConfirm={handleBuy}
       >
         <div className="flex flex-col w-full gap-1.5">
